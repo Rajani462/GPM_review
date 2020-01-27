@@ -19,6 +19,3 @@ Init:
 
 
 Experiments:
-
-01_land_cover_run_01: Estimation of land coverage for probe run 01. 
-02_na_effect_run_01: Comparison of different values for NA in probe run 01.
