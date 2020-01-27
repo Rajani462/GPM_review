@@ -1,0 +1,24 @@
+Analysis of GPM precipitation papers
+
+Data:
+
+probe_run_01: Data from 50 papers published between 2015_2019. 
+
+
+
+Workflow: 
+
+Run scripts in folder 'init' to import and preprocess data and 
+then 'experiments' for specific analyses.
+
+
+Init:
+
+00_data_import.R: Import data to appropriate format. 
+01_data_preparation.R: Data pre-processing.
+
+
+Experiments:
+
+01_land_cover_run_01: Estimation of land coverage for probe run 01. 
+02_na_effect_run_01: Comparison of different values for NA in probe run 01.
