@@ -1,8 +1,14 @@
-#Import data from probes
+#Import raw data 
 
 source('./source/libraries.R')
 
-gpm_run_01 <- fread('./data/raw/GPM_review', header = T, 
-                      col.names = 'value')
+studies <- fread('./data/raw/studies.csv', 
+                 header = T, 
+                 stringsAsFactors = T) #All strings should be factors (categorical variables)
 
-save(gpm_run_01, file = './data/gpm_review_01.Rdata')
+#testing that are imported correctly
+
+studies$ID
+str(studies)
+
+saveRDS(studies, file = './data/studies.Rds')
