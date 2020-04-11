@@ -1,3 +1,42 @@
 ## This is a description of studies.csv file.
 
-It contains the basic criteria for selecting the studies and info about each column in the csv file.
+•	The database contains the recent literature (published between 2015 and 2019) which investigated the performance of GPM products, under different evaluation protocols, spatiotemporal scales, as well as geographic and climatic conditions.
+
+•	The database has designed in such a way that each row corresponds to an observation (paper) and each column describes specific attributes of the paper.
+
+•	Inside the database, each paper assigned by a unique identification (id) code, generated from the first three letters of the first author name followed by a two-digit number represents year of publication.
+
+
+•	The ‘study area’ column has the information regarding the specific place where the evaluation was carried out. For instance, it includes the names of the particular mountains, catchments, plateau or the country name.
+
+•	The subsequent columns named ‘country’ and ‘continents’ represents the particular country name and continents names of the study area.
+
+•	As most of the comparison studies are carried out at a region rather than at a point scale, we calculate the mean from the extent such as the minimum and maximum extend of the latitude and longitude of the study area.
+
+•	The ‘area’ column represents the total area of the study region in square kilometres. In certain cases when the study area is not provided in the particular paper, area of the regions were estimated based on the extent of the latitude and longitude.
+
+•	The column named ‘variable type’ represents the information whether the study was evaluated the rain fall or snow.
+
+•	The ‘surface type’ column classifies the studies based on the surface at which the evaluation was carried. It mainly includes two classes: land, ocean and in some cases both.
+
+•	The ‘GPM data prod’ column represents the type of IMERG data use in the evaluation. It includes IMERG-E, IMERG-L and IMERG-F. There are few studies which mentioned two more classes with in IMERG-F, such as IMERG-F Uncal and IMERG-F Cal.
+
+•	The ‘IMERG algorithm’ column represents the version of the algorithm to which the products are belonging to. It varies from IMERG V03 to IMERG.V06.
+
+•	The ‘record start’ and ‘record end’ represent the starting and ending period of the evaluation time in dd-mm-yy scale. However, the ‘record length’ represents the total evaluation period length in months.
+
+•	The ‘temporal scale’ column represents the temporal scale (hourly, daily, monthly and annually) at which the evaluation was carried out.
+
+•	The ‘grid scale’ column contains the information regarding the spatial resolution at which the evaluation was carried out.
+
+•	The ‘comparison method’ has the information whether the study employed the grid to grid or grid to point comparison. In some cases, the studies involve the comparison of GPM IMERG with both gauge and satellite data, and in that cases, it employs both a grid to point and grid to grid scale comparison as well.
+
+•	The ‘comparison scale’ has information regarding the scale of the evaluation. It includes such as; basin, regional and national scale.
+
+•	The information regarding the temporal scale of evaluation of GPM IMERG with either gauge, radar or other model datasets were stored in the evaluation column.
+
+•	Based on the various statistical indices used for the evaluation of GPM products, the database is categorized into two main classes. Firstly, the ‘Timeseries evaluation’ column represents the volumetric indices such as coefficient of correlation (COR), root mean square error (RMSE) and bias (B), whereas probability of detection (POD), false alarm ratio (FAR), and critical success index (CSI) are in the ‘Categorical evaluation’ column. It should be noted that even though some studies used even more than the above-mentioned indices, the indices not found more than once are removed from the list.
+
+•	Further, the three subsequent column represents the best performances, worst performances and limitations of the particular study in terms of key words rather than the complete sentences.
+
+•	Finally, the ‘year’ and ‘journal’ column contain the information regarding the publication year, and the name of the journal in which the particular paper was got published.
