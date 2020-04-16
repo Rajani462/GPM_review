@@ -18,10 +18,23 @@ gpm_alg <- split_tidy(gpm_alg)
 
 gpm_record <- studies[, .(id, record_start, record_end, record_length)]
 
-study_scale <- studies[, .(id, temporal_scale, grid_scale, comparison_scale, comprison_method)]
+study_tempscale <- studies[, .(id, temporal_scale)]
+study_tempscale <- split_tidy(study_tempsacle)
 
-study_stats <- studies[, .(id, timeseries_eval)]
-study_stats2 <- studies[, .(id, categ_eval)]
+study_gridscale <- studies[, .(id, grid_scale)]
+study_gridscale <- split_tidy(study_gridscale)
+
+study_compscale <- studies[, .(comparison_scale)]
+study_compscale <- split_tidy(study_compscale)
+
+study_compmthod <- studies[, .(comprison_method)]
+study_compmthod <- split_tidy(study_compmthod)
+
+study_stats_time <- studies[, .(id, timeseries_eval)]
+study_stats_time <- split_tidy(study_stats)
+
+study_stats_cat <- studies[, .(id, categ_eval)]
+study_stats_cat <- split_tidy(study_stats_cat)
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 
