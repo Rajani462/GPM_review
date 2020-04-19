@@ -6,6 +6,5 @@ study_split <- separate(x, 2, sep = ',', into = col_names)
 study_tidy <- melt(study_split, id.vars = 'id')
 study_tidy <- study_tidy[complete.cases(study_tidy)]
 study_tidy <- study_tidy[, .(id, variable_name = as.factor(value))]
-#return(study_tidy)
 }
 #----------------------------------------------------------
