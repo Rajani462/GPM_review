@@ -8,7 +8,7 @@ studies <- fread('./data/raw/studies.csv',
 
 #testing that are imported correctly
 
-studies$ID
+studies$id
 str(studies)
 
 saveRDS(studies, file = './data/studies.Rds') #Not any more
