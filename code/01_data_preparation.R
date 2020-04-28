@@ -29,6 +29,9 @@ study_compscale <- split_tidy(study_compscale)
 
 study_compmthod <- studies[, .(id, comparison_method)]
 study_compmthod <- split_tidy(study_compmthod)
+study_compmthod[variable_name == '', variable_name := NA]
+study_compmthod[, variable_name := droplevels(variable_name)]
+
 
 study_stats_time <- studies[, .(id, timeseries_eval)]
 study_stats_time <- split_tidy(study_stats_time)
