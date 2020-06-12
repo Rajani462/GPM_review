@@ -15,9 +15,14 @@ class(world)
 
 global_dist <- ggplot(data = world) + 
   geom_sf() + 
-  coord_sf(xlim = c(180, -180), ylim = c(90, -90)) + 
-  geom_point(data = study_plot, aes(lon_mean, lat_mean,  color = continent)) + 
-  labs(x = "Longitude", y = "Latitude")
+  coord_sf(xlim = c(160, -160), ylim = c(80, -80)) + 
+  geom_point(data = study_plot, aes(lon_mean, lat_mean, 
+                                    color = continent)) + 
+  theme(axis.title.x = element_text(vjust = -3), 
+  axis.title.y = element_text(vjust = 3)) + # move away for axis
+  #labs(x = "Longitude", y = "Latitude")
+  xlab(label = "Longitude") +
+  ylab(label = "Latitude")
 
 global_dist + theme_classic()
 
