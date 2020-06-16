@@ -24,7 +24,7 @@ global_dist <- ggplot(data = world) +
   xlab(label = "Longitude") +
   ylab(label = "Latitude")
 
-global_dist + theme_classic()
+global_dist + theme_bw()
 
 
 
@@ -33,10 +33,15 @@ ggplot(study_plot) +
   geom_bar(aes(x = factor(year), fill = journal)) + 
   theme_classic()
 
-#scatter plot
-country_wise <- ggplot(study_plot) + 
-  geom_bar(aes(x = country))
 
-country_wise + coord_flip() + 
+####continent wise bar plot
+continent_wise <- ggplot(study_plot) +
+  aes(x = continent, fill = continent) +
+  geom_bar() + 
+  geom_text(stat = 'count', aes(label = stat(count), hjust = -0.1), size=3.1)
+
+continent_wise + coord_flip() + 
+  labs(x = "Continent", y = "Number of papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE", "#97B8C2",  "#739F3D", "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
   theme_bw()
-  
