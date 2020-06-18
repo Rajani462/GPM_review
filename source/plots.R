@@ -30,7 +30,10 @@ global_dist + theme_bw()
 
 #bar plot
 ggplot(study_plot) + 
-  geom_bar(aes(x = factor(year), fill = journal)) + 
+  geom_bar(aes(x = factor(year), fill = continent)) + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE", "#97B8C2",  "#739F3D", "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  labs(x = "Year", y = "Number of papers") +
   theme_classic()
 
 
