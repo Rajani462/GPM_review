@@ -13,10 +13,11 @@ study_area <- studies[, .(id, study_area, study_area_type, country, continent,
 gpm_run <- studies[, .(id, gpm_type)]
 gpm_run <- split_tidy(gpm_run)
 
+setnames(get(DT2[1, name]), columnNames)
+
 gpm_alg <- studies[, .(id, gpm_algorithm)]
 gpm_alg <- split_tidy(gpm_alg)
-gpm_alg[variable_name == '', variable_name := NA]
-gpm_alg[, variable_name := droplevels(variable_name)]
+
 
 
 gpm_record <- studies[, .(id, record_start, record_end, record_length)]
@@ -25,19 +26,18 @@ study_tempscale <- studies[, .(id, temporal_scale)]
 study_tempscale <- split_tidy(study_tempscale)
 
 study_gridscale <- studies[, .(id, grid_scale)]
-study_gridscale <- split_tidy(study_gridscale)
+study_gridscale2 <- split_tidy(study_gridscale)
 
 study_compscale <- studies[, .(id, comparison_scale)]
 study_compscale <- split_tidy(study_compscale)
 
 study_compmthod <- studies[, .(id, comparison_method)]
 study_compmthod <- split_tidy(study_compmthod)
-study_compmthod[variable_name == '', variable_name := NA]
-study_compmthod[, variable_name := droplevels(variable_name)]
-
+setnames(study_compmthod, "variable_name", name)
 
 study_stats_time <- studies[, .(id, timeseries_eval)]
 study_stats_time <- split_tidy(study_stats_time)
+setnames(study_stats_time, "variable_name", name)
 
 study_stats_cat <- studies[, .(id, categ_eval)]
 study_stats_cat <- split_tidy(study_stats_cat)
