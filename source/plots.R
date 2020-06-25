@@ -8,7 +8,6 @@ study_plot <- studies[, .(id, study_area, study_area_type, country, continent,
                           lat_mean, lon_mean, area, variable, surface, record_length, year)]
 
 
-imerg_types <- alg_vers[run_type, on = 'id']
 
 imerg_combi <- study_plot[alg_vers, on = 'id']
 imerg_combi <- imerg_combi[run_tpe, on = 'id']
@@ -73,11 +72,24 @@ ggplot(na.omit(gpm_alg), aes(variable_name)) +
 ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean, col = alg_vers)) + 
   geom_point()
 
-ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean, size = record_length, col = gpm_algorithm)) + 
+ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
+                                 size = record_length,
+                                 col = gpm_algorithm)) + 
   geom_point()
 
 ggplot(imerg_combi, aes(gpm_algorithm, gpm_type)) + 
   geom_point()
 
-ggplot(na.omit(imerg_combi), aes(record_length, area)) + 
+ggplot(na.omit(imerg_combi), aes(record_length, temporal_scale)) + 
   geom_point()
+
+#box plot
+ggplot(na.omit(imerg_combi), aes(x=gpm_algorithm, y=record_length,
+                                 fill=comparison_scale)) +
+  geom_boxplot(alpha=0.4) 
+#
+  stat_summary(aes(color=names),fun.y=mean, geom="point", shape=20, size=10) +
+  theme(legend.position="none") +
+  scale_fill_manual(values = palettes_bright$colset_cheer_brights) +
+  scale_color_manual(values = palettes_bright$colset_cheer_brights) +
+  theme_generic
