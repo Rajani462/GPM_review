@@ -10,11 +10,14 @@ studies <- readRDS('./data/studies.Rds')
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
                           lat_mean, lon_mean, area, variable, surface)]
 
-gpm_vers <- studies[, .(id, gpm_type)]
-gpm_vers <- split_tidy(gpm_vers)
+gpm_run <- studies[, .(id, gpm_type)]
+gpm_run <- split_tidy(gpm_run)
 
 gpm_alg <- studies[, .(id, gpm_algorithm)]
 gpm_alg <- split_tidy(gpm_alg)
+gpm_alg[variable_name == '', variable_name := NA]
+gpm_alg[, variable_name := droplevels(variable_name)]
+
 
 gpm_record <- studies[, .(id, record_start, record_end, record_length)]
 
