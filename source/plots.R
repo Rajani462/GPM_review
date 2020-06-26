@@ -42,14 +42,14 @@ global_dist + theme_bw()
 #data for continent and country wise bar plot
 
 
-plot_data2 <- study_plot[, .('publication_count' = .N),
+plot_continents <- study_plot[, .(id, 'publication_count' = .N),
                          by = continent]
 
-plot_data3 <- study_plot[, .('publication_count' = .N),
+plot_country <- study_plot[, .(id, 'publication_count' = .N),
                          by = .(country, continent)]
 
 #continent wise_reordered
-ggplot(plot_data2, aes(x = reorder(continent, publication_count),
+ggplot(plot_continents, aes(x = reorder(continent, publication_count),
                        y = publication_count, fill = continent)) + 
   geom_bar(stat = "identity") + 
   labs(x = "Continent", y = "Number of puplications") + 
@@ -71,8 +71,8 @@ ggplot(study_plot) +
   theme_classic()
 
 #country wise_reoodered
-ggplot(plot_data3, aes(x = reorder(country, publication_count),
-                       y = publication_count, fill = country)) +
+ggplot(plot_country, aes(x = reorder(country, publication_count),
+                       y = publication_count)) +
   geom_bar(stat = "identity") + 
   labs(x = "Country", y = "Number of puplications") + 
   coord_flip() + 
@@ -80,32 +80,23 @@ ggplot(plot_data3, aes(x = reorder(country, publication_count),
 
 #################################################
 
-
-
-#bar plot of IMERG_alg and version
-
-ggplot(na.omit(imerg_combi), aes(variable_name)) + 
-  geom_bar() + 
-  scale_x_discrete(drop = TRUE)
-  
 #scatter plot
 ggplot(na.omit(imerg_combi), aes(x=lat_mean, 
                                  y=lon_mean, 
-                                 col = gpm_algorithm)) + 
+                                 col = imerg_vers)) + 
   geom_point() + 
   theme_bw()
 
 ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
                                  size = record_length,
-                                 col = gpm_algorithm)) + 
+                                 col = imerg_vers)) + 
   geom_point() + 
   theme_classic()
 
-ggplot(imerg_combi, aes(conti, gpm_type)) + 
-  geom_line()
 
-ggplot(na.omit(imerg_combi), aes(record_length, year)) + 
-  geom_point()
+
+ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) + 
+  geom_line()
 
 ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) + 
   geom_point()
