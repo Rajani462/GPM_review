@@ -4,10 +4,10 @@
 
 •	The database has designed in such a way that each row corresponds to an observation (paper) and each column describes specific attributes of the paper.
 
-•	Inside the database, each paper assigned by a unique identification (id) code, generated from the first three letters of the first author name followed by a two-digit number represents year of publication.
+•	Inside the database, each paper assigned by a unique identification (id) code, generated from the first three letters of the first author name followed by a two-digit number represents the year of publication.
 
 
-•	The ‘study area’ column has the information regarding the specific place where the evaluation was carried out. For instance, it includes the names of the particular mountains, catchments, plateau or the country name.
+•	The ‘study area’ column has the information regarding the specific place where the evaluation was carried out. For instance, it includes the names of the particular mountains, catchments, plateau and the country names.
 
 •	The subsequent columns named ‘country’ and ‘continents’ represents the particular country name and continents names of the study area.
 
@@ -17,11 +17,11 @@
 
 •	The column named ‘variable type’ represents the information whether the study was evaluated the rain fall or snow.
 
-•	The ‘surface type’ column classifies the studies based on the surface at which the evaluation was carried. It mainly includes two classes: land, ocean and in some cases both.
+•	The ‘surface type’ column classifies the studies based on the surface at which the evaluation was carried out. It mainly includes two distinct classes: land and ocean, and in some cases both.
 
-•	The ‘GPM data prod’ column represents the type of IMERG data use in the evaluation. It includes IMERG-E, IMERG-L and IMERG-F. There are few studies which mentioned two more classes with in IMERG-F, such as IMERG-F Uncal and IMERG-F Cal.
+•	The ‘GPM data prod’ column represents the type of IMERG data used in the evaluation. It includes IMERG-E, IMERG-L and IMERG-F. There are few studies which mentioned two more classes with in IMERG-F, such as IMERG-F Uncal and IMERG-F Cal (for convinient of the data base those are latrer represented as IMERG-F).
 
-•	The ‘IMERG algorithm’ column represents the version of the algorithm to which the products are belonging to. It varies from IMERG V03 to IMERG.V06.
+•	The ‘IMERG algorithm’ column represents the version of the algorithm to which the products are belonging to. It varies from IMERGV03 to IMERGV06.
 
 •	The ‘record start’ and ‘record end’ represent the starting and ending period of the evaluation time in dd-mm-yy scale. However, the ‘record length’ represents the total evaluation period length in months.
 
@@ -29,7 +29,7 @@
 
 •	The ‘grid scale’ column contains the information regarding the spatial resolution at which the evaluation was carried out.
 
-•	The ‘comparison method’ has the information whether the study employed the grid to grid or grid to point comparison. In some cases, the studies involve the comparison of GPM IMERG with both gauge and satellite data, and in that cases, it employs both a grid to point and grid to grid scale comparison as well.
+•	The ‘comparison method’ has the information whether the study employed the grid to grid or grid to point comparison. In some cases, the studies involve the comparison of GPM IMERG with both gauge and other satellite data, and in that cases, it employs both a grid to point and grid to grid scale comparison as well.
 
 •	The ‘comparison scale’ has information regarding the scale of the evaluation. It includes such as; basin, regional and national scale.
 
