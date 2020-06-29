@@ -12,3 +12,4 @@ studies$id
 str(studies)
 
 saveRDS(studies, file = './data/studies.Rds') #Not any more
+

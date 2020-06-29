@@ -10,7 +10,7 @@ studies <- readRDS('./data/studies.Rds')
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
                           lat_mean, lon_mean, area, variable, surface)]
 
-gpm_run <- studies[, .(id, gpm_type)]
+gpm_run <- studies[, .(id, imerg_type)]
 gpm_run <- split_tidy(gpm_run)
 
 setnames(get(DT2[1, name]), columnNames)
