@@ -14,7 +14,7 @@ run_type <- studies[, .(id, imerg_type)]
 run_type <- split_tidy(run_type)
 
 alg_vers <- studies[, .(id, imerg_vers)]
-alg_vers<- split_tidy(gpm_alg)
+alg_vers<- split_tidy(alg_vers)
 
 
 

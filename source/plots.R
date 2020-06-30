@@ -19,6 +19,8 @@ imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 
 ###########Spatial distribution of publication
+library("sf")
+library("rworldmap")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
@@ -92,7 +94,11 @@ ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
   geom_point() + 
   theme_classic()
 
-
+ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
+                                 #size = record_length,
+                                 col = imerg_type)) + 
+  geom_point() + 
+  theme_classic()
 
 ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) + 
   geom_line()
@@ -101,9 +107,17 @@ ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) +
   geom_point()
 
 #box plot
-ggplot(na.omit(imerg_combi), aes(x=gpm_algorithm, 
+ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
                                  y=record_length,
                                fill= downscale)) +
   geom_boxplot(alpha=0.4) 
-#
+
+ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
+                                 y=record_length)) +
+  geom_boxplot(alpha=0.4) + 
+  theme_classic()
   
+ggplot(na.omit(imerg_combi), aes(x=imerg_type, 
+                                 y=record_length)) +
+  geom_boxplot(alpha=0.4) + 
+  theme_classic()

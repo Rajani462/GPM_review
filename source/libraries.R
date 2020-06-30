@@ -3,3 +3,5 @@
 library(data.table)
 library(tidyr)
 library(ggplot2)
+library("rnaturalearth")
+library("rnaturalearthdata")
