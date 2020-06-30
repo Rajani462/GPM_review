@@ -12,9 +12,8 @@ study_plot <- studies[, .(id, study_area, study_area_type,
                           year, journal)]
 
 
-
 imerg_combi <- study_plot[alg_vers, on = 'id']
-imerg_combi <- imerg_combi[run_tpe, on = 'id']
+imerg_combi <- imerg_combi[run_type, on = 'id']
 imerg_combi <- imerg_combi[study_gridscale, on = 'id']
 imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
