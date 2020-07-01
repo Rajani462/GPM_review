@@ -40,29 +40,35 @@ global_dist + theme_bw()
 
 ######################################
 
-#data for continent and country wise bar plot
+#prepare data for continent and country wise bar plot
 
 
-plot_continents <- study_plot[, .(id, 'publication_count' = .N),
-                         by = continent]
+plot_continents <- study_plot[, .('paper_count' = .N),
+                         by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
-plot_country <- study_plot[, .(id, 'publication_count' = .N),
-                         by = .(country, continent)]
 
-#continent wise_reordered
-ggplot(plot_continents, aes(x = reorder(continent, publication_count),
-                       y = publication_count, fill = continent)) + 
+plot_country <- study_plot[, .('paper_count' = .N),
+                         by = .(country, continent)][, prop := round(paper_count / sum(paper_count), 2)]
+
+
+imerg_verscount <- alg_vers[, .('vers_count' = .N),
+                               by = imerg_vers]
+
+#continent wise papers reordered
+p1 <- ggplot(plot_continents, aes(x = reorder(continent, prop),
+                       y = prop, fill = continent)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Continent", y = "Number of puplications") + 
+  labs(x = "Continent", y = "Papers fraction") + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   coord_flip() + 
-  theme_bw()
+  theme_classic()
+ggsave("results/plots/paperfraction_per_continent.png", p1, dpi = 300, width = 170, height = 100, units = "mm")
 
-#continent wise publications per year
-ggplot(study_plot) + 
+#continent wise papers per year
+p2 <- ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",
@@ -70,14 +76,16 @@ ggplot(study_plot) +
                                "#F4CC70", "#EBB582")) + 
   labs(x = "Year", y = "Number of papers") +
   theme_classic()
+ggsave("results/plots/papers_per_year_continents.png", p2, dpi = 300, width = 170, height = 100, units = "mm")
 
-#country wise_reoodered
-ggplot(plot_country, aes(x = reorder(country, publication_count),
-                       y = publication_count)) +
+#country wise papers reoodered
+p3 <- ggplot(plot_country, aes(x = reorder(country, prop),
+                       y = prop)) +
   geom_bar(stat = "identity") + 
-  labs(x = "Country", y = "Number of puplications") + 
+  labs(x = "Country", y = "Papers fraction") + 
   coord_flip() + 
-  theme_bw()
+  theme_classic()
+ggsave("results/plots/paperfraction_per_country.png", p3, dpi = 300, width = 150, height = 120, units = "mm")
 
 #################################################
 
@@ -113,11 +121,81 @@ ggplot(na.omit(imerg_combi), aes(x=imerg_vers,
   geom_boxplot(alpha=0.4) 
 
 ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
-                                 y=record_length)) +
+                                 y=record_length,
+                                 fill = imerg_type)) +
   geom_boxplot(alpha=0.4) + 
   theme_classic()
+
   
 ggplot(na.omit(imerg_combi), aes(x=imerg_type, 
                                  y=record_length)) +
   geom_boxplot(alpha=0.4) + 
   theme_classic()
+
+#record length and continents line plot
+plot_recordlength <- study_plot[, .('paper_count' = .N),
+                           by = .(record_length, continent)][, percent := round(paper_count / sum(paper_count) * 100, 2)]
+
+ggplot(plot_recordlength, aes(x = record_length)) +
+  geom_histogram() +
+  facet_wrap(~ continent)
+
+#data_continent wise
+asia <- study_plot[continent == "Asia"]
+africa <- study_plot[continent == "Africa"]
+europe <- study_plot[continent == "Europe"]
+south_america <- study_plot[continent == "South America"]
+north_america <- study_plot[continent == "North America"]
+global <- study_plot[continent == "Global"]
+
+#data for histogram or barplot
+plot_asia <- asia[, .('count' = .N),
+                   by = .(record_length, continent)][, percent := round(count / sum(count) * 100, 2)]
+
+
+ggplot(plot_asia, aes(x= factor(record_length))) + 
+  
+  geom_bar() +
+  
+  theme_classic()
+
+
+
+plot_europe <- europe[, .(id, 'count' = .N),
+                  by = .(record_length, continent)][, percent := round(count / sum(count) * 100, 2)]
+
+
+
+
+ggplot(plot_asia, aes(x = record_length, y = percent)) + 
+  geom_line() + 
+  #geom_bar(stat = "identity") + 
+  theme_classic()
+
+
+ggplot(plot_recordlength, aes(x =  record_length,
+                                  y = percent, fill)) + 
+  geom_bar(stat = "identity") + 
+  theme_classic()
+
+hist(plot_recordlength[plot_recordlength$continent == "Asia"])
+
+plot_recordlength %>%
+  filter(continent == "Asia") %>%
+  ggplot() + 
+  geom_histogram(aes(x = record_length), fill = "grey", color = "black")
+
+ggplot(Asia, aes(x = record_length)) +
+  geom_bar()
+
+
+length <- Asia$record_length
+hist(length)
+
+     main="Maximum daily temperature at La Guardia Airport",
+     xlab="Temperature in degrees Fahrenheit",
+     xlim=c(10,48),
+     col="chocolate",
+     border="brown",
+     breaks=c(12,20,30,40))
+hist(length)
