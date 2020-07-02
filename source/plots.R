@@ -90,13 +90,13 @@ ggsave("results/plots/paperfraction_per_country.png", p3, dpi = 300, width = 150
 #################################################
 
 #scatter plot
-ggplot(na.omit(imerg_combi), aes(x=lat_mean, 
-                                 y=lon_mean, 
+ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
+                                 y=lat_mean, 
                                  col = imerg_vers)) + 
   geom_point() + 
-  theme_bw()
+  theme_classic()
 
-ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
+ggplot(na.omit(imerg_combi), aes(x=lon_mean, y=lat_mean,
                                  size = record_length,
                                  col = imerg_vers)) + 
   geom_point() + 
@@ -152,19 +152,29 @@ global <- study_plot[continent == "Global"]
 plot_asia <- asia[, .('count' = .N),
                    by = .(record_length, continent)][, percent := round(count / sum(count) * 100, 2)]
 
+#bar plots continent wise
 
-ggplot(plot_asia, aes(x= factor(record_length))) + 
+barplot(table(cut(asia$record_length, breaks = seq(0, 60, by = 6),
+                  labels =paste(seq(0, 50, by =6), seq(6, 60, by = 6), sep="-"))))
+barplot(table(cut(africa$record_length, breaks = seq(0, 55, by = 5))))
+barplot(table(cut(europe$record_length, breaks = seq(0, 55, by = 5))))
+barplot(table(cut(south_america$record_length, breaks = seq(0, 55, by = 5))))
+barplot(table(cut(north_america$record_length, breaks = seq(0, 55, by = 5))))
+barplot(table(cut(global$record_length, breaks = seq(0, 55, by = 5))))
+
+
+record_length_asia <- table(cut(asia$record_length, breaks = seq(0, 60, by = 6)))
+record_length_asia <- as.data.frame(record_length_asia)
+
+
+ggplot(record_length_asia, aes(x= factor(Var1), y = Freq)) + 
   
-  geom_bar() +
+  geom_bar(stat = "identity") +
   
   theme_classic()
 
-
-
-plot_europe <- europe[, .(id, 'count' = .N),
-                  by = .(record_length, continent)][, percent := round(count / sum(count) * 100, 2)]
-
-
+ggplot(study_plot, aes(record_length, continent)) + 
+  geom_boxplot()
 
 
 ggplot(plot_asia, aes(x = record_length, y = percent)) + 
@@ -190,12 +200,4 @@ ggplot(Asia, aes(x = record_length)) +
 
 
 length <- Asia$record_length
-hist(length)
 
-     main="Maximum daily temperature at La Guardia Airport",
-     xlab="Temperature in degrees Fahrenheit",
-     xlim=c(10,48),
-     col="chocolate",
-     border="brown",
-     breaks=c(12,20,30,40))
-hist(length)
