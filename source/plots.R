@@ -100,64 +100,6 @@ ggsave("results/plots/paperfraction_per_country.png", p3,
 
 #################################################
 
-#scatter plot
-ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
-                                 y=lat_mean, 
-                                 col = imerg_vers)) + 
-  geom_point() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(x=lon_mean, y=lat_mean,
-                                 size = record_length,
-                                 col = imerg_vers)) + 
-  geom_point() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
-                                 #size = record_length,
-                                 col = imerg_type)) + 
-  geom_point() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) + 
-  geom_line()
-
-ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) + 
-  geom_jitter()
-
-ggplot(na.omit(imerg_combi), aes(imerg_vers, imerg_type)) + 
-  geom_jitter()
-
-#box plot
-ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
-                                 y=record_length,
-                               fill= downscale)) +
-  geom_boxplot(alpha=0.4) 
-
-ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
-                                 y=record_length,
-                                 fill = imerg_type)) +
-  geom_boxplot(alpha=0.4) + 
-  theme_classic()
-
-  
-ggplot(na.omit(imerg_combi), aes(x=imerg_type, 
-                                 y=record_length)) +
-  geom_boxplot(alpha=0.4) + 
-  theme_classic()
-
-#record length and continents line plot
-plot_recordlength <- study_plot[, .('paper_count' = .N),
-                           by = .(record_length, continent)][, percent := round(paper_count / sum(paper_count) * 100, 2)]
-
-ggplot(plot_recordlength, aes(x = record_length, y = paper_count)) +
-  geom_line() +
-  facet_wrap(~ continent)
-
-ggplot(plot_recordlength, aes(x = factor(record_length), y = percent)) +
-  geom_bar(stat = "identity")
-
-
 #data_continent wise
 continent_period <- study_plot[, .(id, continent, record_length)]
 
@@ -214,16 +156,134 @@ bar_plot <- ggplot(asia_afi_ero_s_n_ame) +
                                "#97B8C2",  "#739F3D",
                                "#ACBD78"))
 p4 <- bar_plot +  scale_x_discrete(labels = c("0-10", "10-20",
-                                              "20-30", "30-40", "40-50", "50-60")) + 
-  coord_flip()
+                                              "20-30", "30-40", "40-50", "50-60"))
 
 ggsave("results/plots/validation_lengths_continent.png",
-       p4, dpi = 300, width = 150, height = 120, units = "mm")
+       p4, dpi = 280, width = 200, height = 120, units = "mm")
   
 ##############################
 
+#scatter plot
+ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
+                                 y=lat_mean, 
+                                 col = imerg_vers)) + 
+  geom_point() + 
+  theme_classic()
+
+ggplot(na.omit(imerg_combi), aes(x=lon_mean, y=lat_mean,
+                                 size = record_length,
+                                 col = imerg_type)) + 
+  geom_jitter() + 
+  theme_classic()
+
+ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
+                                 #size = record_length,
+                                 col = imerg_type)) + 
+  geom_point() + 
+  theme_classic()
+
+ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) + 
+  geom_line()
+
+ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) + 
+  geom_jitter()
+
+ggplot(na.omit(imerg_combi), aes(imerg_vers, imerg_type, color = imerg_type)) + 
+  geom_jitter()
+
+ggplot(na.omit(imerg_combi), aes(imerg_type, record_length)) + 
+  geom_jitter()
+
+
+
+#box plot
+ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
+                                 y=record_length,
+                                 fill= downscale)) +
+  geom_boxplot(alpha=0.4) 
+
+ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
+                                 y=record_length,
+                                 fill = imerg_type)) +
+  geom_boxplot(alpha=0.4) + 
+  theme_classic()
+
+
+ggplot(na.omit(imerg_combi), aes(x=reorder(imerg_type, record_length), 
+                                 y=record_length)) +
+  geom_boxplot(alpha=0.4) + 
+  theme_classic()
+
+
 ggplot(study_plot, aes(record_length, continent)) + 
   geom_boxplot()
+
+ggplot(na.omit(imerg_combi), aes(record_length, continent)) + 
+  geom_boxplot()
+
+
   
+ggplot(na.omit(imerg_combi), aes(factor(temporal_scale), factor(grid_scale), color = temporal_scale)) + 
+  geom_jitter()
+
+ggplot(na.omit(imerg_combi), aes(temporal_scale)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) +
+  facet_wrap(~continent) + 
+  labs(x = "Temporal scale", y = "Papers") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
+
+##temporal_scale
+
+p6 <- ggplot(na.omit(imerg_combi), aes(temporal_scale, fill = continent)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) + 
+  facet_wrap(~imerg_type) + 
+  labs(x = "Temporalal scale", y = "Papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/plots/Temporal_scale_vs_papers.png", p6)
+
+#spatial_scale_vs_papers_bar_plot
+
+p7 <- ggplot(na.omit(imerg_combi), aes(grid_scale, fill = continent)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) + 
+  facet_wrap(~year) + 
+  labs(x = "Spatial scale", y = "Papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
+
+ggsave("results/plots/Temporal_scale_vs_papers.png", p7)
+
+#spatial_vs_temporal_scales_scatter_plot
+p8 <- ggplot(na.omit(imerg_combi), aes(grid_scale, temporal_scale, color = grid_scale)) + 
+  geom_jitter()+ 
+  facet_wrap(~year) + 
+  labs(x = "Spatial scale", y = "Temporal scale") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x")
+
+ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
+
+############################################3
 
 
+ggplot(na.omit(imerg_combi), aes(comparison_method), fill = comparison_method) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) + 
+  facet_wrap(~year) + 
+  labs(x = "Comaprison methods", y = "Papers") + 
+ 
