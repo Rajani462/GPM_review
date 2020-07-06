@@ -19,7 +19,15 @@ imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 
 ###########Spatial distribution of publication
-library("sf")
+library("ggmap")
+library("choroplethrMaps")
+data(country.map, package = "choroplethrMaps")
+head(unique(country.map$region), 12)
+
+
+
+
+
 library("rworldmap")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
@@ -64,7 +72,7 @@ p1 <- ggplot(plot_continents, aes(x = reorder(continent, prop),
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   coord_flip() + 
-  theme_classic()
+  theme_bw()
 ggsave("results/plots/paperfraction_per_continent.png", p1,
        dpi = 300, width = 170, height = 100, units = "mm")
 
@@ -76,7 +84,7 @@ p2 <- ggplot(study_plot) +
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   labs(x = "Year", y = "Number of papers") +
-  theme_classic()
+  theme_bw()
 ggsave("results/plots/papers_per_year_continents.png", p2,
        dpi = 300, width = 170, height = 100, units = "mm")
 
@@ -86,7 +94,7 @@ p3 <- ggplot(plot_country, aes(x = reorder(country, prop),
   geom_bar(stat = "identity") + 
   labs(x = "Country", y = "Papers fraction") + 
   coord_flip() + 
-  theme_classic()
+  theme_bw()
 ggsave("results/plots/paperfraction_per_country.png", p3,
        dpi = 300, width = 150, height = 120, units = "mm")
 
@@ -115,10 +123,10 @@ ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) +
   geom_line()
 
 ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) + 
-  geom_point()
+  geom_jitter()
 
 ggplot(na.omit(imerg_combi), aes(imerg_vers, imerg_type)) + 
-  geom_point()
+  geom_jitter()
 
 #box plot
 ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
