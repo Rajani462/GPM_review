@@ -168,6 +168,12 @@ imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
 imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
 imerg_combi <- subset(imerg_combi, !is.na(continent))
 
+#reorder the levels of temporal_sclae of imerg_combi
+imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
+                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
+                                                "18h",  "1h to 168h", "1d to 60d", 
+                                                "daily",  "monthly",  "seasonal", "annual"))
+
 ##temporal_scale_plot
 
 p6 <- ggplot(imerg_combi, aes(temporal_scale, fill = continent)) + 
@@ -228,19 +234,7 @@ ggplot(na.omit(imerg_combi), aes(grid_scale)) +
 
 
 
-
-
-
-
-
-
 #scatter plot
-
-
-
-
-
-
 
 
 ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
