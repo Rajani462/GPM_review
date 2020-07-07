@@ -163,7 +163,81 @@ ggsave("results/plots/validation_lengths_continent.png",
   
 ##############################
 
+##temporal_scale
+
+p6 <- ggplot(na.omit(imerg_combi), aes(temporal_scale, fill = continent)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) + 
+  facet_wrap(~imerg_type) + 
+  labs(x = "Temporalal scale", y = "Papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/plots/Temporal_scale_vs_papers.png", p6)
+
+#spatial_scale_vs_papers_bar_plot
+
+p7 <- ggplot(na.omit(imerg_combi), aes(grid_scale, fill = continent)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=percent) + 
+  facet_wrap(~year) + 
+  labs(x = "Spatial scale", y = "Papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
+
+ggsave("results/plots/Temporal_scale_vs_papers.png", p7)
+
+
+#spatial_vs_temporal_scales_scatter_plot
+p8 <- ggplot(na.omit(imerg_combi), aes(grid_scale, temporal_scale, color = grid_scale)) + 
+  geom_jitter()+ 
+  facet_wrap(~year) + 
+  labs(x = "Spatial scale", y = "Temporal scale") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_grid(imerg_type~continent, scales="free", space="free_x")
+
+ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
+
+############################################3
+
+ggplot(na.omit(imerg_combi), aes(grid_scale)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  labs(x = "Spatial scale", y = "Papers") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  facet_wrap(~comparison_method)
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
+
+
+
+
+
+
+
+
+
 #scatter plot
+
+
+
+
+
+
+
+
 ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
                                  y=lat_mean, 
                                  col = imerg_vers)) + 
@@ -222,7 +296,7 @@ ggplot(na.omit(imerg_combi), aes(record_length, continent)) +
   geom_boxplot()
 
 
-  
+
 ggplot(na.omit(imerg_combi), aes(factor(temporal_scale), factor(grid_scale), color = temporal_scale)) + 
   geom_jitter()
 
@@ -233,57 +307,3 @@ ggplot(na.omit(imerg_combi), aes(temporal_scale)) +
   labs(x = "Temporal scale", y = "Papers") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
 
-##temporal_scale
-
-p6 <- ggplot(na.omit(imerg_combi), aes(temporal_scale, fill = continent)) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
-  scale_y_continuous(labels=percent) + 
-  facet_wrap(~imerg_type) + 
-  labs(x = "Temporalal scale", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
-
-ggsave("results/plots/Temporal_scale_vs_papers.png", p6)
-
-#spatial_scale_vs_papers_bar_plot
-
-p7 <- ggplot(na.omit(imerg_combi), aes(grid_scale, fill = continent)) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
-  scale_y_continuous(labels=percent) + 
-  facet_wrap(~year) + 
-  labs(x = "Spatial scale", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
-
-ggsave("results/plots/Temporal_scale_vs_papers.png", p7)
-
-#spatial_vs_temporal_scales_scatter_plot
-p8 <- ggplot(na.omit(imerg_combi), aes(grid_scale, temporal_scale, color = grid_scale)) + 
-  geom_jitter()+ 
-  facet_wrap(~year) + 
-  labs(x = "Spatial scale", y = "Temporal scale") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x")
-
-ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
-
-############################################3
-
-
-ggplot(na.omit(imerg_combi), aes(comparison_method), fill = comparison_method) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
-  scale_y_continuous(labels=percent) + 
-  facet_wrap(~year) + 
-  labs(x = "Comaprison methods", y = "Papers") + 
- 
