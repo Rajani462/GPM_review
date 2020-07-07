@@ -162,13 +162,18 @@ ggsave("results/plots/validation_lengths_continent.png",
        p4, dpi = 280, width = 200, height = 120, units = "mm")
   
 ##############################
+#before plotting remove NA's from imerg_combi
 
-##temporal_scale
+imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
+imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
+imerg_combi <- subset(imerg_combi, !is.na(continent))
 
-p6 <- ggplot(na.omit(imerg_combi), aes(temporal_scale, fill = continent)) + 
+##temporal_scale_plot
+
+p6 <- ggplot(imerg_combi, aes(temporal_scale, fill = continent)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
-  facet_wrap(~imerg_type) + 
+  #facet_wrap(~imerg_type) + 
   labs(x = "Temporalal scale", y = "Papers") + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",

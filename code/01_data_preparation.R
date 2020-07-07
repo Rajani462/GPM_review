@@ -17,7 +17,6 @@ alg_vers <- studies[, .(id, imerg_vers)]
 alg_vers<- split_tidy(alg_vers)
 
 
-
 gpm_record <- studies[, .(id, record_start, record_end, record_length)]
 
 study_tempscale <- studies[, .(id, temporal_scale)]
