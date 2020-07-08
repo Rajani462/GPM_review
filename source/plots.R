@@ -180,6 +180,8 @@ imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale,
                                                 "18h",  "1h to 168h", "1d to 60d", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
 
+imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
+                                     levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
 ###temporal_scale_plot
 
 p6 <- ggplot(imerg_combi, aes(temporal_scale, fill = continent)) + 
@@ -245,15 +247,16 @@ ggsave("results/plots/Spatial_scale_vs_papers.png", p7)
 
 
 #spatial_vs_temporal_scales_scatter_plot
-p8 <- ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = grid_scale)) + 
+p8 <- ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
   geom_jitter()+ 
-  facet_wrap(~year) + 
+  facet_wrap(~continent) + 
   labs(x = "Spatial scale", y = "Temporal scale") + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x")
+  theme_light()
+  #facet_grid(~, scales="free", space="free_x")
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
 
