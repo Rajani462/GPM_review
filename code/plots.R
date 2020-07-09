@@ -19,17 +19,7 @@ imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 
-###########Spatial distribution of publication
-library("ggmap")
-library("choroplethrMaps")
-data(country.map, package = "choroplethrMaps")
-head(unique(country.map$region), 12)
-
-
-
-
-
-library("rworldmap")
+###########Spatial distribution of publications
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
@@ -73,7 +63,7 @@ p1 <- ggplot(plot_continents, aes(x = reorder(continent, prop),
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   coord_flip() + 
-  theme_bw()
+  theme_small
 ggsave("results/plots/paperfraction_per_continent.png", p1,
        dpi = 300, width = 170, height = 100, units = "mm")
 
@@ -85,7 +75,7 @@ p2 <- ggplot(study_plot) +
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   labs(x = "Year", y = "Number of papers") +
-  theme_bw()
+  theme_small
 ggsave("results/plots/papers_per_year_continents.png", p2,
        dpi = 300, width = 170, height = 100, units = "mm")
 
@@ -194,7 +184,8 @@ p6 <- ggplot(imerg_combi, aes(temporal_scale, fill = continent)) +
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   facet_grid(imerg_type~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  theme_small
 
 ggsave("results/plots/Temporal_scale_vs_papers.png", p6)
 
@@ -205,7 +196,8 @@ p6_1 <- ggplot(imerg_combi, aes(temporal_scale)) +
   scale_y_continuous(labels=percent) + 
   facet_wrap(~imerg_vers) + 
   labs(x = "Temporalal scale", y = "Papers") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  theme_generic
 
 ggsave("results/plots/Temp_scale_IMERG_vers.png", p6_1)
 
@@ -255,7 +247,7 @@ p8 <- ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
-  theme_light()
+  theme_small
   #facet_grid(~, scales="free", space="free_x")
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
