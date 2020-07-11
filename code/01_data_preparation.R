@@ -50,6 +50,7 @@ study_stats_cat <- studies[, .(id, categ_eval)]
 study_stats_cat <- split_tidy(study_stats_cat)
 study_stats_cat <- subset(study_stats_cat, !is.na(categ_eval))
 
+reference_type <-  studies[, .(id, categ_eval)]
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 

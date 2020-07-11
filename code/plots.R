@@ -94,8 +94,8 @@ ggsave("results/plots/paperfraction_per_country.png", p3,
 #data_continent wise
 continent_period <- study_plot[, .(id, continent, record_length)]
 
-count_pap <- study_plot[, .(id, continent, record_length)]
 
+count_pap <- study_plot[, .(id, continent, record_length)]
 asia <- study_plot[continent == "Asia"]
 africa <- study_plot[continent == "Africa"]
 europe <- study_plot[continent == "Europe"]
@@ -179,13 +179,10 @@ p6 <- ggplot(imerg_combi, aes(temporal_scale, fill = continent)) +
   scale_y_continuous(labels=percent) + 
   #facet_wrap(~imerg_type) + 
   labs(x = "Temporalal scale", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = colset_bright_qual) + 
   facet_grid(imerg_type~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  theme_small
+  theme_generic
+p6 + theme(axis.text.x = element_text(angle=45, vjust = 1, hjust=1))
 
 ggsave("results/plots/Temporal_scale_vs_papers.png", p6)
 
@@ -224,33 +221,33 @@ ggsave("results/plots/Temp_scale_Year.png", p6_3)
 
 ###spatial_scale_vs_papers_bar_plot
 
-p7 <- ggplot(imerg_combi, aes(grid_scale, fill = continent)) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   labs(x = "Spatial scale", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
-
-ggsave("results/plots/Spatial_scale_vs_papers.png", p7)
-
+  #scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               #"#97B8C2",  "#739F3D",
+                               #"#ACBD78",  
+                              # "#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  facet_grid(~continent, scales="free", space="free_y") + 
+  facet_wrap(~continent, ) + 
+  theme_small + 
+  labs(fill = "IMERG_TYPE")
+  
+ggsave("results/plots/Spatial_scale_vs_papers.png", width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 #spatial_vs_temporal_scales_scatter_plot
-p8 <- ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
+ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
   geom_jitter()+ 
   facet_wrap(~continent) + 
   labs(x = "Spatial scale", y = "Temporal scale") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  #scale_color_manual(values = colset_bright)
   theme_small
   #facet_grid(~, scales="free", space="free_x")
+ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, height = 5.3, units = "in", dpi = 600)
 
-ggsave("results/plots/Temporal_vs_Spatial_scales.png", p8)
 
 ##comparison_method
 
@@ -408,4 +405,5 @@ ggplot(imerg_combi, aes(factor(year), temporal_scale)) +
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   facet_grid(imerg_type~continent, scales="free", space="free_x")
-
+######reference data types
+ ref_data_types <- studies[,  .(id, gauge_eval, radar_eval, satellite_eval)]

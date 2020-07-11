@@ -1,5 +1,5 @@
 #source('./source/libs.R')
-#source('./source/palettes.R')
+source('./source/palettes.R')
 library(extrafont)
 library(grid) 
 #font_import()  #run first time
