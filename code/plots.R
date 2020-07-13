@@ -45,6 +45,8 @@ global_dist + theme_bw()
 plot_continents <- study_plot[, .('paper_count' = .N),
                          by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
+countries <- study_plot[, .(id, country)]
+countries[!apply(country == "", 1, all),]
 
 plot_country <- study_plot[, .('paper_count' = .N),
                          by = .(country, continent)][, prop := round(paper_count / sum(paper_count), 2)]
@@ -80,7 +82,7 @@ ggsave("results/plots/papers_per_year_continents.png", p2,
        dpi = 300, width = 170, height = 100, units = "mm")
 
 #country wise papers reoodered
-p3 <- ggplot(plot_country, aes(x = reorder(country, prop),
+ggplot(na.omit(plot_country), aes(x = reorder(country, prop),
                        y = prop)) +
   geom_bar(stat = "identity") + 
   labs(x = "Country", y = "Papers fraction") + 
@@ -173,26 +175,24 @@ imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale,
 
 imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
                                      levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
-###temporal_scale_plot
+###temporal_scale_vs_papers_barplot
 
-ggplot(imerg_combi, aes(temporal_scale, fill = continent)) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   #facet_wrap(~imerg_type) + 
   labs(x = "Temporalal scale", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x") + 
+  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  facet_grid(~continent, scales="free", space="free_x") + 
+  theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  theme_small
+  labs(fill = "IMERG_TYPE")
 
-ggsave("results/plots/Temporal_scale_vs_papers.png", width = 7.2,
+ggsave("results/plots/Temporal_scale_vs_papers.png", width = 9.5,
        height = 5.3, units = "in", dpi = 600)
 #temporal_scale_vs_IMERG_version
 
-p6_1 <- ggplot(imerg_combi, aes(temporal_scale)) + 
+ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~imerg_vers) + 
@@ -235,14 +235,13 @@ ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
                               # "#F4CC70", "#EBB582")) + 
   scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
   facet_grid(~continent, scales="free", space="free_x") + 
-  facet_wrap(~continent) + 
+  #facet_wrap(~continent) + 
   #theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
-  theme_small + 
+  theme_generic + 
   labs(fill = "IMERG_TYPE")
 
-ggsave("results/plots/Spatial_scale_vs_papers.png", width = 7.2, 
+ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5, 
        height = 5.3, units = "in", dpi = 600)
-
 
 #spatial_vs_temporal_scales_scatter_plot
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
