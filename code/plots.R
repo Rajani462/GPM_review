@@ -45,8 +45,14 @@ global_dist + theme_bw()
 plot_continents <- study_plot[, .('paper_count' = .N),
                          by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
-countries <- study_plot[, .(id, country)]
-countries[!apply(country == "", 1, all),]
+countries2 <- study_plot[, .(id, country)]
+countries %>% remove_empty("rows")
+
+countries[!apply(countries == "", 2, all),]
+
+countries2 %>% 
+  mutate_all(~ifelse(. %in% c("N/A", "null", ""), NA, .)) %>% 
+  na.omit()
 
 plot_country <- study_plot[, .('paper_count' = .N),
                          by = .(country, continent)][, prop := round(paper_count / sum(paper_count), 2)]
