@@ -87,10 +87,14 @@ ggsave("results/plots/papers_per_year_continents.png", p2,
 ggplot(plot_country) + 
   geom_bar(aes(x = reorder(country, -prop),
                y = prop,
-               color = continent, 
+               #color = continent, 
                fill = continent),
            stat = "identity") + 
   labs(x = "Country", y = "Studies (%)") + 
+  scale_fill_manual(values = c("#4D648D", "#337BAE",
+                               "#97B8C2",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
   #coord_flip() + 
   theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
