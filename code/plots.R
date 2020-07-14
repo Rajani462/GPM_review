@@ -45,17 +45,12 @@ global_dist + theme_bw()
 plot_continents <- study_plot[, .('paper_count' = .N),
                          by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
-countries2 <- study_plot[, .(id, country)]
-countries %>% remove_empty("rows")
+continents <- study_plot[, .(id, continent)]
+country_continents <- study_country[continents, on = 'id']
+country_continents <- subset(country_continents, !is.na(country))
 
-countries[!apply(countries == "", 2, all),]
-
-countries2 %>% 
-  mutate_all(~ifelse(. %in% c("N/A", "null", ""), NA, .)) %>% 
-  na.omit()
-
-plot_country <- study_plot[, .('paper_count' = .N),
-                         by = .(country, continent)][, prop := round(paper_count / sum(paper_count), 2)]
+plot_country <- country_continents[, .('paper_count' = .N),
+                         by = .(country, continent)][, prop := round(paper_count / sum(paper_count) * 100, 2)]
 
 
 imerg_verscount <- alg_vers[, .('vers_count' = .N),
@@ -87,15 +82,35 @@ p2 <- ggplot(study_plot) +
 ggsave("results/plots/papers_per_year_continents.png", p2,
        dpi = 300, width = 170, height = 100, units = "mm")
 
-#country wise papers reoodered
-ggplot(na.omit(plot_country), aes(x = reorder(country, prop),
+#country wise papers reordered
+
+ggplot(plot_country) + 
+  geom_bar(aes(x = reorder(country, -prop),
+               y = prop,
+               color = continent, 
+               fill = continent),
+           stat = "identity") + 
+  labs(x = "Country", y = "Studies (%)") + 
+  #coord_flip() + 
+  theme_small + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  #labs(fill = continent)
+  
+  ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
+         height = 5.3, units = "in", dpi = 600)
+
+
+ggplot(plot_country, aes(x = reorder(country, -prop),
                        y = prop)) +
-  geom_bar(stat = "identity") + 
-  labs(x = "Country", y = "Papers fraction") + 
-  coord_flip() + 
-  theme_bw()
-ggsave("results/plots/paperfraction_per_country.png", p3,
-       dpi = 300, width = 150, height = 120, units = "mm")
+  geom_bar(stat = "identity", color = continent) + 
+  labs(x = "Country", y = "Studies (%)") + 
+  #coord_flip() + 
+  theme_small + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  #labs(fill = continent)
+
+ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
 
 #################################################
 

@@ -10,6 +10,10 @@ studies <- readRDS('./data/studies.Rds')
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
                           lat_mean, lon_mean, area, variable, surface)]
 
+study_country <- studies[, .(id, country)]
+study_country <- split_tidy(study_country)
+study_country <- subset(study_country, !is.na(country))
+
 run_type <- studies[, .(id, imerg_type)]
 run_type <- split_tidy(run_type)
 run_type <- subset(run_type, !is.na(imerg_type))
