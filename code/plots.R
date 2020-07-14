@@ -184,7 +184,8 @@ ggplot(asia_afi_ero_s_n_ame_glob) +
 ggsave("results/plots/validation_lengths_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
   
-##############################
+##########################################
+
 #before plotting remove NA's from imerg_combi
 
 imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
@@ -192,6 +193,7 @@ imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
 imerg_combi <- subset(imerg_combi, !is.na(continent))
 imerg_combi <- subset(imerg_combi, !is.na(comparison_scale))
 imerg_combi <- subset(imerg_combi, !is.na(downscale))
+
 #reorder the levels of temporal_sclae of imerg_combi
 imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
@@ -215,7 +217,7 @@ ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) +
 
 ggsave("results/plots/Temporal_scale_vs_papers.png", width = 9.5,
        height = 5.3, units = "in", dpi = 600)
-#temporal_scale_vs_IMERG_version
+###temporal_scale_vs_IMERG_version
 
 ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
@@ -227,7 +229,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
 
 ggsave("results/plots/Temp_scale_IMERG_vers.png", p6_1)
 
-#Temporal_scale_vs_IMERG_type
+###Temporal_scale_vs_IMERG_type
 
 p6_2 <- ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
@@ -238,7 +240,7 @@ p6_2 <- ggplot(imerg_combi, aes(temporal_scale)) +
 
 ggsave("results/plots/Temp_scale_IMERG_type.png", p6_2)
 
-#Temporal_scale_vs_Year
+###Temporal_scale_vs_Year
 p6_3 <- ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
@@ -268,7 +270,7 @@ ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
 ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5, 
        height = 5.3, units = "in", dpi = 600)
 
-#spatial_vs_temporal_scales_scatter_plot
+###spatial_vs_temporal_scales_scatter_plot
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
   geom_jitter()+ 
   facet_wrap(~continent) + 
@@ -283,7 +285,7 @@ ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-##comparison_method
+###comparison_method
 
 ggplot(imerg_combi, aes(comparison_method)) + 
   geom_bar()+ 
@@ -298,7 +300,7 @@ ggplot(imerg_combi, aes(comparison_method)) +
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
-##comparison_scale
+###comparison_scale
 ggplot(imerg_combi, aes(continent)) + 
   geom_bar()+ 
   facet_wrap(~year) + 
@@ -312,7 +314,7 @@ ggplot(imerg_combi, aes(continent)) +
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
-##downscaled
+###downscaled
 ggplot(imerg_combi, aes(continent)) + 
   geom_bar()+ 
   facet_wrap(~year) + 
@@ -325,14 +327,6 @@ ggplot(imerg_combi, aes(continent)) +
   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
-
-
-
-
-
-
-
-
 
 
 ############################################3
@@ -349,7 +343,7 @@ ggplot(imerg_combi, aes(grid_scale)) +
 
 
 
-#scatter plot
+###scatter plot
 
 ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
                                  y=lat_mean, 
@@ -383,7 +377,7 @@ ggplot(na.omit(imerg_combi), aes(imerg_type, record_length)) +
 
 
 
-#box plot
+###box plot
 ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
                                  y=record_length,
                                  fill= downscale)) +
@@ -438,7 +432,7 @@ ggplot(imerg_combi, aes(factor(year), temporal_scale)) +
                                "#F4CC70", "#EBB582")) + 
   facet_grid(imerg_type~continent, scales="free", space="free_x")
 
-#IMERG_Vers_ vs_year
+###IMERG_Vers_ vs_year
   
 imerg_vers_count <- imerg_combi[, .('vers_count' = .N),
                                   by = .(imerg_vers, year)]
@@ -446,7 +440,7 @@ imerg_vers_count <- imerg_combi[, .('vers_count' = .N),
 ggplot(imerg_vers_count, aes(year, vers_count, color = imerg_vers)) + 
   geom_line()
 
-#Reference_type_vs_number
+###Reference_type_vs_number
 
 reftype_count <- studies[, .(id, 'count_pap' = .N),
                                 by = ref_type]
