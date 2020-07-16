@@ -20,22 +20,27 @@ imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 
 ###########Spatial distribution of publications
+study_plot2 <- subset(study_plot,continent!="Global")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
-global_dist <- ggplot(data = world) + 
-  geom_sf() + 
-  coord_sf(xlim = c(160, -160), ylim = c(80, -80)) + 
-  geom_point(data = study_plot, aes(lon_mean, lat_mean, 
+ggplot(data = world) + 
+  geom_sf(fill = "white") + 
+  coord_sf(xlim = c(-160, 160), ylim = c(-80, 80)) + 
+  geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
                                     color = continent)) + 
   theme(axis.title.x = element_text(vjust = -3), 
   axis.title.y = element_text(vjust = 3)) + # move away for axis
   #labs(x = "Longitude", y = "Latitude")
   xlab(label = "Longitude") +
-  ylab(label = "Latitude")
+  ylab(label = "Latitude") + 
+  theme_very_small + 
+  theme(legend.title=element_blank())
 
-global_dist + theme_bw()
+ggsave("results/plots/Global_distribution.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 ######################################
 
@@ -57,18 +62,21 @@ imerg_verscount <- alg_vers[, .('vers_count' = .N),
                                by = imerg_vers]
 
 #continent wise papers reordered
-p1 <- ggplot(plot_continents, aes(x = reorder(continent, prop),
+ggplot(plot_continents, aes(x = reorder(continent, prop),
                        y = prop, fill = continent)) + 
   geom_bar(stat = "identity") + 
   labs(x = "Continent", y = "Papers fraction") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
+  geom_text(aes(label = prop, hjust = -0.05), size = 3) + 
+  scale_fill_manual(values = c("#F0810F", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   coord_flip() + 
-  theme_small
-ggsave("results/plots/paperfraction_per_continent.png", p1,
-       dpi = 300, width = 170, height = 100, units = "mm")
+  theme_generic + 
+  theme(legend.position = "none")
+
+ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
+       height = 5.3, units = "in", dpi = 600)
 
 #continent wise papers per year
 p2 <- ggplot(study_plot) + 
@@ -91,16 +99,17 @@ ggplot(plot_country) +
                fill = continent),
            stat = "identity") + 
   labs(x = "Country", y = "Studies (%)") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
+  scale_fill_manual(values = c("#F0810F", "#337BAE",
                                "#97B8C2",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   #coord_flip() + 
   theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  #labs(fill = continent)
+  labs(fill = "Continents")
+
   
-  ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
+ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
          height = 5.3, units = "in", dpi = 600)
 
 
