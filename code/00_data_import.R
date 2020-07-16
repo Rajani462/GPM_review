@@ -11,5 +11,4 @@ studies <- fread('./data/raw/studies.csv',
 studies$id
 str(studies)
 
-saveRDS(studies, file = './data/studies.Rds') #Not any more
-
+saveRDS(studies, file = './data/studies.Rds')
