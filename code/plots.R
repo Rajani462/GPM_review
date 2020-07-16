@@ -1,7 +1,7 @@
 source('./source/libs.R')
 source('./source/themes.R')
 source('./source/palettes.R')
-###############################
+##############################
 #data preparation for plots
 
 study_plot <- studies[, .(id, study_area, study_area_type,
