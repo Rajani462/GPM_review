@@ -27,7 +27,7 @@ class(world)
 
 ggplot(data = world) + 
   geom_sf(fill = "white") + 
-  coord_sf(xlim = c(-160, 160), ylim = c(-80, 80)) + 
+  coord_sf(xlim = c(-160, 160), ylim = c(-90, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
                                     color = continent)) + 
   theme(axis.title.x = element_text(vjust = -3), 
@@ -35,7 +35,7 @@ ggplot(data = world) +
   #labs(x = "Longitude", y = "Latitude")
   xlab(label = "Longitude") +
   ylab(label = "Latitude") + 
-  theme_very_small + 
+  theme_generic + 
   theme(legend.title=element_blank())
 
 ggsave("results/plots/Global_distribution.png",
@@ -48,7 +48,7 @@ ggsave("results/plots/Global_distribution.png",
 
 
 plot_continents <- study_plot[, .('paper_count' = .N),
-                         by = continent][, prop := round(paper_count / sum(paper_count), 2)]
+                         by = continent][, prop := round(paper_count / sum(paper_count) * 100, 0)]
 
 continents <- study_plot[, .(id, continent)]
 country_continents <- study_country[continents, on = 'id']
@@ -65,8 +65,8 @@ imerg_verscount <- alg_vers[, .('vers_count' = .N),
 ggplot(plot_continents, aes(x = reorder(continent, prop),
                        y = prop, fill = continent)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Continent", y = "Papers fraction") + 
-  geom_text(aes(label = prop, hjust = -0.05), size = 3) + 
+  labs(x = "Continent", y = "Papers") + 
+  geom_text(aes(label = prop, hjust = -0.5), size = 3) + 
   scale_fill_manual(values = c("#F0810F", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
@@ -79,16 +79,21 @@ ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
 #continent wise papers per year
-p2 <- ggplot(study_plot) + 
+ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
-  labs(x = "Year", y = "Number of papers") +
-  theme_small
-ggsave("results/plots/papers_per_year_continents.png", p2,
-       dpi = 300, width = 170, height = 100, units = "mm")
+  labs(x = "Year", y = "Number of papers") + 
+  facet_grid(~continent, space = "free", scales = "free_x") + 
+  theme_very_small + 
+  theme(legend.position = "none") + 
+  theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
+  
+ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
+       height = 5.3, units = "in", dpi = 600)
+
 
 #country wise papers reordered
 
