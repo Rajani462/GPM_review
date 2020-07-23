@@ -27,16 +27,22 @@ class(world)
 
 ggplot(data = world) + 
   geom_sf(fill = "white") + 
-  coord_sf(xlim = c(-160, 160), ylim = c(-90, 90)) + 
+  coord_sf(xlim = c(-180, 180), ylim = c(-90, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
                                     color = continent)) + 
+  #scale_color_manual(values = c("#F0810F", "#337BAE",
+                              # "#97B8C2",
+                              # "#ACBD78",  
+                               #"#F4CC70", "#EBB582")) +  
+  
   theme(axis.title.x = element_text(vjust = -3), 
   axis.title.y = element_text(vjust = 3)) + # move away for axis
   #labs(x = "Longitude", y = "Latitude")
   xlab(label = "Longitude") +
   ylab(label = "Latitude") + 
   theme_generic + 
-  theme(legend.title=element_blank())
+  theme(legend.title=element_blank()) + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 ggsave("results/plots/Global_distribution.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
@@ -104,14 +110,17 @@ ggplot(plot_country) +
                fill = continent),
            stat = "identity") + 
   labs(x = "Country", y = "Studies (%)") + 
-  scale_fill_manual(values = c("#F0810F", "#337BAE",
-                               "#97B8C2",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
+  #scale_fill_manual(values = c("#F0810F", "#337BAE",
+                              # "#97B8C2",
+                               #"#ACBD78",  
+                               #"#F4CC70", "#EBB582")) + 
+ 
   #coord_flip() + 
   theme_small + 
+  theme(legend.position = "bottom") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  labs(fill = "Continents")
+  labs(fill = "Continents") + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
   
 ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
