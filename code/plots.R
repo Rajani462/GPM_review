@@ -217,7 +217,7 @@ imerg_combi <- subset(imerg_combi, !is.na(continent))
 imerg_combi <- subset(imerg_combi, !is.na(comparison_scale))
 imerg_combi <- subset(imerg_combi, !is.na(downscale))
 
-#reorder the levels of temporal_sclae of imerg_combi
+#reorder the levels of temporal_scale of imerg_combi
 imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
                                                 "18h",  "1h to 168h", "1d to 60d", 
@@ -254,22 +254,41 @@ ggsave("results/plots/Temp_scale_IMERG_vers.png", p6_1)
 
 ###Temporal_scale_vs_IMERG_type
 
-p6_2 <- ggplot(imerg_combi, aes(temporal_scale)) + 
+ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~imerg_type) + 
   labs(x = "Temporalal scale", y = "Papers") + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggsave("results/plots/Temp_scale_IMERG_type.png", p6_2)
 
+###IMERG_type vs IMERG_version
+
+ggplot(imerg_combi, aes(imerg_type, imerg_vers)) + 
+  geom_jitter()+ 
+  facet_wrap(~continent) + 
+  labs(x = "IMERG RUN", y = "IMERG version") + 
+  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  #scale_color_manual(values = colset_bright)
+  theme_small + 
+  #labs(col = "IMERG_TYPE")
+#theme(legend.title = IMERG_TYPE)
+#facet_grid(~, scales="free", space="free_x")
+
+ggsave("results/plots/IMERG_TYPE_vs_VERSION.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
+
 ###Temporal_scale_vs_Year
-p6_3 <- ggplot(imerg_combi, aes(temporal_scale)) + 
+ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~year) + 
   labs(x = "Temporalal scale", y = "Papers") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme_small + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+ 
 
 ggsave("results/plots/Temp_scale_Year.png", p6_3)
 
@@ -318,7 +337,7 @@ ggplot(imerg_combi, aes(comparison_method)) +
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
-  facet_grid(downscale~continent, scales="free", space="free_x") + 
+  facet_grid(~continent, scales="free", space="free_x") + 
   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
@@ -361,7 +380,7 @@ ggplot(imerg_combi, aes(grid_scale)) +
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
-  facet_wrap(~comparison_method)
+  facet_wrap(~comparison_method) + 
   theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
 
 
@@ -444,16 +463,6 @@ ggplot(na.omit(imerg_combi), aes(temporal_scale)) +
   labs(x = "Temporal scale", y = "Papers") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
 ####################
-
-ggplot(imerg_combi, aes(factor(year), temporal_scale)) + 
-  geom_jitter() + 
-  facet_wrap(~year) + 
-  labs(x = "Spatial scale", y = "Temporal scale") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  facet_grid(imerg_type~continent, scales="free", space="free_x")
 
 ###IMERG_Vers_ vs_year
   
