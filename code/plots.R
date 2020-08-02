@@ -53,9 +53,6 @@ ggsave("results/plots/Global_distribution.png",
 #prepare data for continent and country wise bar plot
 
 
-plot_continents <- study_plot[, .('paper_count' = .N),
-                         by = continent][, prop := round(paper_count / sum(paper_count) * 100, 0)]
-
 continents <- study_plot[, .(id, continent)]
 country_continents <- study_country[continents, on = 'id']
 country_continents <- subset(country_continents, !is.na(country))
@@ -68,18 +65,24 @@ imerg_verscount <- alg_vers[, .('vers_count' = .N),
                                by = imerg_vers]
 
 #continent wise papers reordered
+
+plot_continents <- study_plot[, .('paper_count' = .N),
+                              by = continent][, prop := round(paper_count / sum(paper_count), 2)]
+
 ggplot(plot_continents, aes(x = reorder(continent, prop),
-                       y = prop, fill = continent)) + 
+                       y = prop, fill = continent, label = scales::percent(prop))) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Continent", y = "Papers") + 
-  geom_text(aes(label = prop, hjust = -0.5), size = 3) + 
+  labs(x = "Continent", y = "Number of papers") + 
+  geom_text(aes(label = scales::percent(prop), hjust = 0.5), size = 3.2) + 
+  scale_y_continuous(labels = scales::percent) +
   scale_fill_manual(values = c("#F0810F", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
   coord_flip() + 
   theme_generic + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  theme(axis.title.y = element_blank())
 
 ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
@@ -101,6 +104,22 @@ ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
 
+ggplot(study_plot) + 
+  geom_bar(aes(x = factor(year), fill = continent)) + 
+  scale_fill_manual(values = c("#F0810F", "#337BAE",
+                               "#97B8C2",  "#739F3D",
+                               "#ACBD78",  
+                               "#F4CC70", "#EBB582")) + 
+  labs(x = "Year", y = "Number of papers") + 
+  #facet_grid(~continent, space = "free", scales = "free_x") + 
+  theme_generic + 
+  theme(legend.position = "right") + 
+  theme(legend.direction = "vertical") + 
+  theme(legend.title = element_blank())
+  theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
+       height = 5.3, units = "in", dpi = 600)
 #country wise papers reordered
 
 ggplot(plot_country) + 
@@ -266,7 +285,7 @@ ggsave("results/plots/Temp_scale_IMERG_type.png", p6_2)
 
 ###IMERG_type vs IMERG_version
 
-ggplot(imerg_combi, aes(imerg_type, imerg_vers)) + 
+ggplot(imerg_combi, aes(imerg_type, imerg_vers, color = imerg_type)) + 
   geom_jitter()+ 
   facet_wrap(~continent) + 
   labs(x = "IMERG RUN", y = "IMERG version") + 
@@ -274,9 +293,10 @@ ggplot(imerg_combi, aes(imerg_type, imerg_vers)) +
   #scale_color_manual(values = colset_bright)
   theme_small + 
   #labs(col = "IMERG_TYPE")
-#theme(legend.title = IMERG_TYPE)
+  theme(legend.position = "none")
 #facet_grid(~, scales="free", space="free_x")
 
+  
 ggsave("results/plots/IMERG_TYPE_vs_VERSION.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
@@ -290,7 +310,8 @@ ggplot(imerg_combi, aes(temporal_scale)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
  
 
-ggsave("results/plots/Temp_scale_Year.png", p6_3)
+ggsave("results/plots/Temp_scale_Year.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
 
 ###spatial_scale_vs_papers_bar_plot
 
@@ -479,9 +500,11 @@ reftype_count <- studies[, .(id, 'count_pap' = .N),
 
 ggplot(reftype_count, aes(x = reorder(ref_type, count_pap))) + 
   geom_bar() + 
-  labs(x = "Reference type", y = "Papers") + 
+  labs(x = "Reference type", y = "Number of papers") + 
   geom_text(aes(x = ref_type, 
                 y = count_pap, label = count_pap, hjust = -0.2)) + 
   coord_flip() + 
   theme_generic
-ggsave("results/plots/Ref_type_vs_papers.png")
+
+ggsave("results/plots/Ref_type_vs_papers.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
