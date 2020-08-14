@@ -1,0 +1,26 @@
+Location,Basin,Model,Period,Data_type,NSE,NSCE,Bias,Ref
+China,Ganjiang River basin,CREST,1 May to 30 Sep 2014,IMERG_F,0.77,0.77,-14.09,"Tang et al., 2016"
+China,Beijiang River,VIC,"April 1st, 2015 to dec2015",IMERG_E,0.344,0.344,28.48,"Wang et al., 2017"
+China,Beijiang River,VIC,"March 14th, 2015",IMERG_L,0.285,0.285,28.05,
+China,Beijiang River,VIC,"March 12th, 2014 to December 31st, 2015",IMERG_F,0.742,0.742,10,
+Myanmar,Chindwin River basin,GXAJ,1 April 2014 to 31,IMERG_F,0.647,,-23.5,Yuan et al. 2017
+India,Mahanadi,VIC,2014Apri_Dec,IMERG_F,0.64,,41.4,"Beria et al., 2017"
+India,Wainganga ,VIC,,IMERG_F,0.74,,-0.52,
+Peruvian_Ecuadorian,Amazon basin, MGB-IPH model ,March 2014 to June2015,IMERG_F,-24.21,,,"Zubieta et al., 2017"
+China,Upper Mekong River Basin, XAJ model ,,,0.53,,,"He et al., 2017"
+China,Ganjiang River Basin,CREST,jun2014-sep2014,IMERG_F,0.7,,-12.62,"Li et al., 2017"
+China,Yellow River basin,VIC,jan2015-dec2015,IMERG_F,0.62,,-7.2,"Lu et.al.,2018"
+China,Yellow River basin,VIC,,IMERGFRUnCal,-0.08,,-18.96,
+China,Mishui,VIC,,IMERG_E,0.73,,-19.52,"Jiang et.al.,2018"
+China,Mishui,VIC,,IMERG_L,0.71,,-25.23,
+China,Mishui,VIC,,IMERG_F,0.81,,-6.53,
+Malaysia,Kelantan River Basin,SWAT,12 March 2014–31 December 2016,IMERG_E,0.7,,-27.6,"Tan et.al.,2018"
+Malaysia,Kelantan River Basin,SWAT,,IMERG_L,0.66,,-36.3,
+Malaysia,Kelantan River Basin,SWAT,,IMERG_F,0.71,,-5.3,
+Myanmar,Chindwin River basin,GXAJ,March2014 to Dec 2016,IMERG_F,0.84,,-18.5,"Yuan. et. al.,2019"
+China,Huaihe River Basin,VIC,April 2014 to December 2015 ,IMERG_E,0.18,,-39.91,"Su. et. al.,2019"
+China,Huaihe River Basin,VIC,,IMERG_L,0.16,,-43.95,
+China,Huaihe River Basin,VIC,,IMERG_F,0.64,,-16.51,
+China,Nanliu River basin,XAJ,March2014 to Dec 2016,IMERG_F,0.28,0.28,,"Liang. et. al.,2019"
+China,Nanliu River basin,XAJ,,IMERGFRUnCal,0.29,0.29,59.49,
+China,Nanliu River basin,XAJ,,IMERG_E,0.3,0.3,56.73,
