@@ -4,7 +4,7 @@ source('./source/libraries.R')
 source('./source/functions.R')
 
 studies <- readRDS('./data/studies.Rds')
-
+hydrological <- readRDS('./data/hydrological.Rds')
 #Dividing the data-base into multiple small data-table
 
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
@@ -59,3 +59,5 @@ reference_type <-  studies[, .(id, gauge_eval, radar_eval, model_eval, satellite
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 
+############Hydrological
+hydro_metrics <- hydrological[, .(Ref, Location, Basin, Data_type, Model, NSE, Bias)]
