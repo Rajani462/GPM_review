@@ -6,25 +6,15 @@ ggplot(na.omit(hydro_metrics), aes(x=Data_type,
   geom_jitter(aes(shape=Model, color = Location), size= 4) + 
   scale_shape_manual(values=c(15, 13, 18, 20, 25)) + 
   theme_small + 
-  geom_vline(aes(xintercept= Data_type), color="#990000", linetype="dashed")
-
-
+  #geom_vline(aes(xintercept= Data_type), color="#990000", linetype="dashed")
 
 
 
 ggsave("results/plots/hydrological_NSE.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-NSE + geom_point(aes(colour = factor(Location)), size = 4) +
-  geom_point(colour = "grey90", size = 1.5)
 
-  
-   geom_point() + 
-  #scale_color_discrete(guide = "none") + 
-  #facet_wrap(~Location) + 
-  theme_generic
-#geom_vline(aes(xintercept= c(1.5,2.5,3.5,4.5)), color="#990000", linetype="dashed")
-   #geom_vline(xintercept = c(1.5,2.5,3.5,4.5))
+
 
 ggplot(na.omit(hydro_metrics), aes(x=Data_type, 
                                    y= Bias, 
