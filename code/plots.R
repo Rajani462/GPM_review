@@ -30,10 +30,7 @@ ggplot(data = world) +
   coord_sf(xlim = c(-180, 180), ylim = c(-90, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
                                     color = continent)) + 
-  #scale_color_manual(values = c("#F0810F", "#337BAE",
-                              # "#97B8C2",
-                              # "#ACBD78",  
-                               #"#F4CC70", "#EBB582")) +  
+  scale_color_manual(values = mycol_continent5) +  
   
   theme(axis.title.x = element_text(vjust = -3), 
   axis.title.y = element_text(vjust = 3)) + # move away for axis
@@ -90,10 +87,7 @@ ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
 #continent wise papers per year
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = mycol_continent6) + 
   labs(x = "Year", y = "Number of papers") + 
   facet_grid(~continent, space = "free", scales = "free_x") + 
   theme_very_small + 
@@ -129,10 +123,7 @@ ggplot(plot_country) +
                fill = continent),
            stat = "identity") + 
   labs(x = "Country", y = "Studies (%)") + 
-  #scale_fill_manual(values = c("#F0810F", "#337BAE",
-                              # "#97B8C2",
-                               #"#ACBD78",  
-                               #"#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = mycol_continent5) + 
  
   #coord_flip() + 
   theme_small + 
@@ -201,13 +192,17 @@ record_length_global[, continent_name := factor('Global')]
 
 #merge all the continents to a single data table
 merge_continents <- merge(record_length_asia, record_length_africa, all = TRUE)
-asia_afi_ero <- merge(merge_continents, record_length_europe, all = TRUE)
-asia_afi_ero_samer <- merge(asia_afi_ero, record_length_s_america, all = TRUE)
-asia_afi_ero_s_n_ame <- merge(asia_afi_ero_samer, record_length_n_america, all = TRUE)
-asia_afi_ero_s_n_ame_glob <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
+AFE <- merge(merge_continents, record_length_europe, all = TRUE)
+AFES <- merge(asia_afi_ero, record_length_s_america, all = TRUE)
+AFESN <- merge(asia_afi_ero_samer, record_length_n_america, all = TRUE)
+AFESNG <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
 
+#reorder the levels of continents
+AFESNG$continent_name <- factor(AFESNG$continent_name, 
+                                     levels = c("Africa", "Asia", "Europe", "Global", "South_America", 
+                                                "North_America"))
 ##and now the plot
-ggplot(asia_afi_ero_s_n_ame_glob) + 
+ggplot(AFESNG) + 
   geom_bar(aes(x= factor(V1),
       y = N,
       group = continent_name,
@@ -216,9 +211,7 @@ ggplot(asia_afi_ero_s_n_ame_glob) +
       stat = "identity",
       position = position_dodge()) + 
   labs(x = "Validation length (months)", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE", "#97B8C2",
-                               "#739F3D","#ACBD78",  "#F4CC70",
-                               "#EBB582")) + 
+  scale_fill_manual(values = mycol_continent6) + 
   scale_x_discrete(labels = c("0-12", "13-24", "25-36", "37-48", "48-60")) + 
   theme_generic + 
   theme(legend.title = element_blank())

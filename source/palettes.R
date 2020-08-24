@@ -137,3 +137,11 @@ my_reds <- colorRampPalette(c('#fef0d9','#fdd49e','#fdbb84','#fc8d59','#ef6548',
 rgb_palette_Qualitative_1 <- colorRampPalette(c("#4575b4", "#78c679", "#f46d43", "#74add1", "#807dba", "#fee090", "#d9f0a3", "#d73027",     "#abd9e9", "#fdae61", "#fa9fb5", "#ffed6f"), space = "rgb")
 rgb_palette_Qualitative_2 <- colorRampPalette(c("#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5",     "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f"))
 rgb_palette_Qualitative_3 <- colorRampPalette(c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00",     "#cab2d6", "#6a3d9a", "#ffed6f", "#b15928"))
+
+
+###Rajani_Palettes for Continents (GPM_review)
+mycol_continent5 <- c( "#69bdd2", "#A3A500", "#00BF7D", "#e07b39", 
+                      "#80391e")  
+
+mycol_continent6<- c( "#69bdd2", "#A3A500", "#00BF7D", "#edb879", "#e07b39", 
+                           "#80391e")
