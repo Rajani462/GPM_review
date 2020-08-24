@@ -297,10 +297,6 @@ ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   labs(x = "Spatial scale", y = "Papers") + 
-  #scale_fill_manual(values = c("#4D648D", "#337BAE",
-                              # "#97B8C2",  "#739F3D",
-                               #"#ACBD78",  
-                              # "#F4CC70", "#EBB582")) + 
   scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   #facet_wrap(~continent) + 
@@ -313,7 +309,7 @@ ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5,
 
 ###spatial_vs_temporal_scales_scatter_plot
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
-  geom_jitter()+ 
+  geom_jitter(width = 0.20, height = 0.5)+ 
   facet_wrap(~continent) + 
   labs(x = "Spatial scale", y = "Temporal scale") + 
   scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
@@ -323,8 +319,10 @@ ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
   #theme(legend.title = IMERG_TYPE)
   #facet_grid(~, scales="free", space="free_x")
 
+
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
+
 
 ###comparison_method
 
@@ -486,3 +484,25 @@ ggplot(reftype_count, aes(x = reorder(ref_type, count_pap))) +
 
 ggsave("results/plots/Ref_type_vs_papers.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
+
+
+ref_imergcombi <- reftype_count[imerg_combi, on = 'id']
+
+  imerg_combi <- study_plot[alg_vers, on = 'id']
+imerg_combi <- imerg_combi[run_type, on = 'id']
+
+###spatial_vs_temporal_scales_scatter_plot and reference types
+ggplot(ref_imergcombi, aes(grid_scale, temporal_scale, color = ref_type)) + 
+  geom_jitter(width = 0.20, height = 0.5)+ 
+  facet_wrap(~ref_type) + 
+  labs(x = "Spatial scale", y = "Temporal scale") + 
+  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  #scale_color_manual(values = colset_bright)
+  theme_small + 
+  labs(col = "Reference_type")
+#theme(legend.title = IMERG_TYPE)
+#facet_grid(~, scales="free", space="free_x")
+
+ggsave("results/plots/Temporal_vs_Spatial_Reference.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
+
