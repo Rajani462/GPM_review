@@ -140,8 +140,8 @@ rgb_palette_Qualitative_3 <- colorRampPalette(c("#a6cee3", "#1f78b4", "#b2df8a",
 
 
 ###Rajani_Palettes for Continents (GPM_review)
-mycol_continent5 <- c( "#69bdd2", "#A3A500", "#00BF7D", "#e07b39", 
+mycol_continent5 <- c( "#00B0F6", "#A3A500", "#00BF7D", "#e07b39", 
                       "#80391e")  
 
-mycol_continent6<- c( "#69bdd2", "#A3A500", "#00BF7D", "#edb879", "#e07b39", 
+mycol_continent6<- c( "#00B0F6", "#A3A500", "#00BF7D", "#edb879", "#e07b39", 
                            "#80391e")

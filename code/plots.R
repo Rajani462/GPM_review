@@ -100,10 +100,7 @@ ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
 
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
-  scale_fill_manual(values = c("#F0810F", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
+  scale_fill_manual(values = mycol_continent6) + 
   labs(x = "Year", y = "Number of papers") + 
   #facet_grid(~continent, space = "free", scales = "free_x") + 
   theme_generic + 
@@ -114,6 +111,7 @@ ggplot(study_plot) +
 
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
+
 #country wise papers reordered
 
 ggplot(plot_country) + 
@@ -135,19 +133,6 @@ ggplot(plot_country) +
   
 ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
          height = 5.3, units = "in", dpi = 600)
-
-
-ggplot(plot_country, aes(x = reorder(country, -prop),
-                       y = prop)) +
-  geom_bar(stat = "identity", color = continent) + 
-  labs(x = "Country", y = "Studies (%)") + 
-  #coord_flip() + 
-  theme_small + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  #labs(fill = continent)
-
-ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
-       height = 5.3, units = "in", dpi = 600)
 
 #################################################
 
