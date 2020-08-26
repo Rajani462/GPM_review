@@ -27,5 +27,5 @@ BIAS <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= Bias)) +
 
 #NSE_BIAS <- grid.arrange(NSE, BIAS, ncol = 2)
 NSE_BIAS <- ggarrange(NSE, BIAS, ncol = 2, common.legend = TRUE, legend = "bottom")
-ggsave("results/plots/hydrological_NSE_BIAS.png", NSE_BIAS, width = 7.2,
+ggsave("results/plots/hydrological_NSE_BIAS.png", NSE_BIAS, width = 9.2,
        height = 5.3, units = "in", dpi = 600)
