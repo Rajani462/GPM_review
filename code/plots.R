@@ -25,25 +25,22 @@ study_plot2 <- subset(study_plot,continent!="Global")
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
-ggplot(data = world) + 
+global_dist <- world_map <- ggplot(data = world) + 
   geom_sf(fill = "white") + 
-  coord_sf(xlim = c(-180, 180), ylim = c(-90, 90)) + 
+  coord_sf(xlim = c(-170, 170), ylim = c(-58, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
-                                    color = continent)) + 
-  scale_color_manual(values = mycol_continent5) +  
-  
-  theme(axis.title.x = element_text(vjust = -3), 
-  axis.title.y = element_text(vjust = 3)) + # move away for axis
-  #labs(x = "Longitude", y = "Latitude")
-  xlab(label = "Longitude") +
-  ylab(label = "Latitude") + 
+                                     color = continent)) + 
+  scale_color_manual(values = mycol_continent5) + 
   theme_generic + 
-  theme(legend.title=element_blank()) + 
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-ggsave("results/plots/Global_distribution.png",
-       width = 7.2, height = 5.3, units = "in", dpi = 600)
-
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none")
 
 ######################################
 
@@ -60,6 +57,33 @@ plot_country <- country_continents[, .('paper_count' = .N),
 
 imerg_verscount <- alg_vers[, .('vers_count' = .N),
                                by = imerg_vers]
+
+###country wise papers reordered
+
+country_plot <- ggplot(plot_country) + 
+  geom_bar(aes(x = reorder(country, -prop),
+               y = prop,
+               #color = continent, 
+               fill = continent),
+           stat = "identity") + 
+  labs(x = "Country", y = "Studies (%)") + 
+  scale_fill_manual(values = mycol_continent5) + 
+  
+  theme_small + 
+  theme(legend.position = "bottom") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  labs(fill = "Continents") + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+global_dist <- ggplotGrob(global_dist)
+
+Country_barplot + annotation_custom(grob = global_dist, xmin = 3, xmax = Inf, 
+                                    ymin = 5, ymax = Inf)
+
+ggsave("results/plots/Global_dist.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 #continent wise papers reordered
 
@@ -111,28 +135,6 @@ ggplot(study_plot) +
 
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
-
-#country wise papers reordered
-
-ggplot(plot_country) + 
-  geom_bar(aes(x = reorder(country, -prop),
-               y = prop,
-               #color = continent, 
-               fill = continent),
-           stat = "identity") + 
-  labs(x = "Country", y = "Studies (%)") + 
-  scale_fill_manual(values = mycol_continent5) + 
- 
-  #coord_flip() + 
-  theme_small + 
-  theme(legend.position = "bottom") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  labs(fill = "Continents") + 
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-  
-ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
-         height = 5.3, units = "in", dpi = 600)
 
 #################################################
 

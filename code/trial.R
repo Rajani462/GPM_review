@@ -39,22 +39,29 @@ Country_barplot <- ggplot(plot_country) +
 
 world_map <- ggplot(data = world) + 
   geom_sf(fill = "white") + 
-  coord_sf(xlim = c(-180, 180), ylim = c(-90, 90)) + 
+  coord_sf(xlim = c(-170, 170), ylim = c(-58, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
                                      color = continent)) + 
-  scale_color_manual(values = mycol_continent5) +  
-  
-  theme(axis.title.x = element_text(vjust = -3), 
-        axis.title.y = element_text(vjust = 3)) + # move away for axis
-  #labs(x = "Longitude", y = "Latitude")
-  xlab(label = "Longitude") +
-  ylab(label = "Latitude") + 
+  scale_color_manual(values = mycol_continent5) + 
   theme_generic + 
-  theme(legend.title=element_blank()) + 
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none")
+
+ggsave("results/plots/Global_trial.png",
+       width = 7.2, height = 6.3, units = "in", dpi = 600)
 
 
+map <- ggplotGrob(world_map)
 
-Country_barplot + annotation_custom(grob = world_map, xmin = xmin, xmax = xmax, 
-                                    ymin = ymin-1.5, ymax = ymin+1.5)
+Country_barplot + annotation_custom(grob = map, xmin = 3, xmax = Inf, 
+                                    ymin = 5, ymax = Inf)
 
+ggsave("results/plots/Global_trial.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
