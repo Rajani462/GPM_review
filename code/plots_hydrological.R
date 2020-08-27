@@ -3,25 +3,18 @@ hydro_metrics <- subset(hydro_metrics, hydro_metrics$Data_type != "IMERGFRUnCal"
 
 NSE <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= NSE)) + 
   labs(x = "IMERG_RUN", y = "NSE") + 
-  geom_jitter(aes(shape=Model, color = Location), size= 4) + 
+  geom_jitter(aes(shape=Model, color = Location), size= 3) + 
   #scale_shape_manual(values=c(15, 13, 18, 20, 25)) + 
-  theme_small
+  theme_generic
   #geom_vline(aes(xintercept= Data_type), color="#990000", linetype="dashed")
-
-
-
-ggsave("results/plots/hydrological_NSE.png", width = 7.2,
-       height = 5.3, units = "in", dpi = 600)
-
-
 
 
 BIAS <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= Bias)) + 
   labs(x = "IMERG_RUN", y = "Realative bias (%)") + 
-  geom_jitter(aes(shape=Model, color = Location), size= 4) + 
+  geom_jitter(aes(shape=Model, color = Location), size= 3) + 
   scale_color_discrete(guide = "none") + 
   #facet_wrap(~Location) + 
-  theme_small + 
+  theme_generic + 
   theme(legend.position = "none")
 
 

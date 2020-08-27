@@ -113,13 +113,13 @@ ggplot(study_plot) +
   geom_bar(aes(x = factor(year), fill = continent)) + 
   scale_fill_manual(values = mycol_continent6) + 
   labs(x = "Year", y = "Number of papers") + 
-  facet_grid(~continent, space = "free", scales = "free_x") + 
+  facet_grid(~continent, space = "free", scales = "free_y") + 
   theme_very_small + 
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
   
 ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
-       height = 5.3, units = "in", dpi = 600)
+       height = 4.3, units = "in", dpi = 600)
 
 
 ggplot(study_plot) + 
@@ -219,7 +219,7 @@ imerg_combi <- subset(imerg_combi, !is.na(downscale))
 #reorder the levels of temporal_scale of imerg_combi
 imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
-                                                "18h",  "1h to 168h", "1d to 60d", 
+                                                "18h", "1d to 60d", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
 
 imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
