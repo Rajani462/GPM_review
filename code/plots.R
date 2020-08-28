@@ -109,7 +109,7 @@ ggplot(plot_continents, aes(x = reorder(continent, prop),
 ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-#continent wise papers per year
+###continent wise papers per year
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
   scale_fill_manual(values = mycol_continent6) + 
@@ -137,8 +137,15 @@ ggplot(study_plot) +
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-#################################################
+#line plot
+Papers_year <- study_plot[, .('paper_count' = .N),
+                                by = .(continent, year)]
 
+ggplot(Papers_year, aes(x = year, y = paper_count, group = continent)) + 
+  geom_line(aes(col = continent)) + 
+  labs(x = "Year", y = "Number of studies") + 
+  theme_very_small
+  
 #data_continent wise
 continent_period <- study_plot[, .(id, continent, record_length)]
 
