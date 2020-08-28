@@ -2,7 +2,7 @@ source('./source/libs.R')
 source('./source/themes.R')
 source('./source/palettes.R')
 ##############################
-#data preparation for plots
+#data preparation for plots----
 
 study_plot <- studies[, .(id, study_area, study_area_type,
                           country, continent, 
@@ -19,7 +19,28 @@ imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 imerg_combi <- imerg_combi[ref_type, on  = 'id']
-###########Spatial distribution of publications
+
+###before plotting remove NA's from imerg_combi
+
+imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
+imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
+imerg_combi <- subset(imerg_combi, !is.na(continent))
+imerg_combi <- subset(imerg_combi, !is.na(comparison_scale))
+imerg_combi <- subset(imerg_combi, !is.na(downscale))
+
+#reorder the levels of temporal_scale of imerg_combi
+imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
+                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
+                                                "18h", "1d to 60d", 
+                                                "daily",  "monthly",  "seasonal", "annual"))
+
+imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
+                                     levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
+
+###temporal_scale_vs_papers_barplot----
+
+
+###########Spatial distribution of studies----
 
 study_plot2 <- subset(study_plot,continent!="Global")
 
@@ -45,7 +66,7 @@ global_dist <- world_map <- ggplot(data = world) +
 
 ######################################
 
-#prepare data for continent and country wise bar plot
+#prepare data for continent and country wise bar plot----
 
 
 continents <- study_plot[, .(id, continent)]
@@ -205,7 +226,7 @@ AFESNG <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
 AFESNG$continent_name <- factor(AFESNG$continent_name, 
                                      levels = c("Africa", "Asia", "Europe", "Global", "South_America", 
                                                 "North_America"))
-##and now the plot
+####Validation_length plots----
 ggplot(AFESNG) + 
   geom_bar(aes(x= factor(V1),
       y = N,
@@ -224,24 +245,6 @@ ggsave("results/plots/validation_lengths_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
   
 ##########################################
-
-#before plotting remove NA's from imerg_combi
-
-imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
-imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
-imerg_combi <- subset(imerg_combi, !is.na(continent))
-imerg_combi <- subset(imerg_combi, !is.na(comparison_scale))
-imerg_combi <- subset(imerg_combi, !is.na(downscale))
-
-#reorder the levels of temporal_scale of imerg_combi
-imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
-                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
-                                                "18h", "1d to 60d", 
-                                                "daily",  "monthly",  "seasonal", "annual"))
-
-imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
-                                     levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
-###temporal_scale_vs_papers_barplot
 
 ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
@@ -280,7 +283,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
 
 ggsave("results/plots/Temp_scale_IMERG_type.png", p6_2)
 
-###IMERG_type vs IMERG_version
+###IMERG_type vs IMERG_version----
 
 ggplot(imerg_combi, aes(imerg_type, imerg_vers, color = imerg_type)) + 
   geom_jitter()+ 
@@ -297,7 +300,10 @@ ggplot(imerg_combi, aes(imerg_type, imerg_vers, color = imerg_type)) +
 ggsave("results/plots/IMERG_TYPE_vs_VERSION.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-###Temporal_scale_vs_Year
+###---
+### Temporal_scale_vs_Year----
+
+
 ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
@@ -310,7 +316,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
 ggsave("results/plots/Temp_scale_Year.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-###spatial_scale_vs_papers_bar_plot
+###spatial_scale_vs_papers_bar_plot----
 
 ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
@@ -326,7 +332,7 @@ ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
 ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5, 
        height = 5.3, units = "in", dpi = 600)
 
-###spatial_vs_temporal_scales_scatter_plot
+###spatial_vs_temporal_scales_scatter_plot----
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
   geom_jitter(width = 0.20, height = 0.5)+ 
   facet_wrap(~continent) + 
@@ -343,7 +349,7 @@ ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
 
-###comparison_method
+###comparison_method----
 ggplot(imerg_combi, aes(ref_type, comparison_method)) + 
   geom_jitter()
 
@@ -351,8 +357,6 @@ ggplot(imerg_combi, aes(ref_type, comparison_method)) +
   labs(x = "Spatial scale", y = "Temporal scale") + 
   scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
   #scale_color_manual(values = colset_bright)
-
-
 
 
 ggplot(imerg_combi, aes(comparison_method)) + 
@@ -370,7 +374,7 @@ ggplot(imerg_combi, aes(comparison_method)) +
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
-###comparison_scale
+###comparison_scale----
 ggplot(imerg_combi, aes(continent)) + 
   geom_bar()+ 
   facet_wrap(~year) + 
@@ -384,7 +388,7 @@ ggplot(imerg_combi, aes(continent)) +
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
-###downscaled
+###downscaled----
 ggplot(imerg_combi, aes(continent)) + 
   geom_bar()+ 
   facet_wrap(~year) + 
