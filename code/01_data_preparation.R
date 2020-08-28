@@ -32,8 +32,6 @@ study_gridscale <- studies[, .(id, grid_scale)]
 study_gridscale <- split_tidy(study_gridscale)
 study_gridscale <- subset(study_gridscale, !is.na(grid_scale))
 
-
-
 study_compscale <- studies[, .(id, comparison_scale)]
 study_compscale <- split_tidy(study_compscale)
 study_compscale <- subset(study_compscale, !is.na(comparison_scale))
@@ -42,8 +40,6 @@ study_compscale <- subset(study_compscale, !is.na(comparison_scale))
 study_compmthod <- studies[, .(id, comparison_method)]
 study_compmthod <- split_tidy(study_compmthod)
 study_compmthod <- subset(study_compmthod, !is.na(comparison_method))
-
-
 
 study_stats_time <- studies[, .(id, timeseries_eval)]
 study_stats_time <- split_tidy(study_stats_time)
@@ -54,8 +50,10 @@ study_stats_cat <- studies[, .(id, categ_eval)]
 study_stats_cat <- split_tidy(study_stats_cat)
 study_stats_cat <- subset(study_stats_cat, !is.na(categ_eval))
 
-reference_type <-  studies[, .(id, gauge_eval, radar_eval, model_eval, satellite_eval
-)]
+reference_type <-  studies[, .(id, gauge_eval, radar_eval, model_eval,
+                               satellite_eval)]
+
+ref_type <-  studies[, .(id, ref_type)]
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 

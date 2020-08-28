@@ -1,11 +1,15 @@
+#remove the IMERGFRUnCal from the database.
+hydro_metrics <- subset(hydro_metrics, hydro_metrics$Data_type != "IMERGFRUnCal") 
 
-hydro_metrics <- subset(hydro_metrics, hydro_metrics$Data_type != "IMERGFRUnCal") #remove the IMERGFRUnCal from the database.
+#reorder the factors 
+hydro_metrics$Data_type <- factor(hydro_metrics$Data_type, 
+                                 levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
 
 ggplot(na.omit(hydro_metrics), aes(x=Data_type, 
                                    y= NSE)) + 
-  geom_jitter(aes(shape=Model, color = Location), size= 4) + 
+  geom_point(aes(shape=Model, color = Location), size= 4) + 
   scale_shape_manual(values=c(15, 13, 18, 20, 25)) + 
-  theme_small + 
+  theme_small
   #geom_vline(aes(xintercept= Data_type), color="#990000", linetype="dashed")
 
 
@@ -21,9 +25,9 @@ ggplot(na.omit(hydro_metrics), aes(x=Data_type,
                                    shape = Model,
                                    col = Data_type)) + 
   labs(x = "IMERG_RUN", y = "Realative bias (%)") + 
-  geom_jitter() + 
-  scale_color_discrete(guide = "none") + 
-  facet_wrap(~Location) + 
+  geom_point(aes(shape=Model, color = Location), size= 4) + 
+  #scale_color_discrete(guide = "none") + 
+  #facet_grid(~Location) + 
   theme_small
 
 ggsave("results/plots/hydrological_RBIAS.png", width = 7.2,

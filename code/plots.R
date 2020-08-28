@@ -18,7 +18,7 @@ imerg_combi <- imerg_combi[study_gridscale, on = 'id']
 imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
-
+imerg_combi <- imerg_combi[ref_type, on  = 'id']
 ###########Spatial distribution of publications
 study_plot2 <- subset(study_plot,continent!="Global")
 
@@ -69,6 +69,15 @@ imerg_verscount <- alg_vers[, .('vers_count' = .N),
 plot_continents <- study_plot[, .('paper_count' = .N),
                               by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
+
+plot_continents2 <- study_plot[, .('paper_count' = .N),
+                              by = .(continent, year)]
+
+ggplot(plot_continents2, aes(x = year, y = paper_count, group = continent)) + 
+  geom_line(aes(color = continent))
+  
+
+
 ggplot(plot_continents, aes(x = reorder(continent, prop),
                        y = prop, fill = continent, label = scales::percent(prop))) + 
   geom_bar(stat = "identity") + 
@@ -99,7 +108,7 @@ ggplot(study_plot) +
   theme_very_small + 
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
-  
+
 ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
@@ -349,6 +358,16 @@ ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
 ###comparison_method
+ggplot(imerg_combi, aes(ref_type, comparison_method)) + 
+  geom_jitter()
+
+
+  labs(x = "Spatial scale", y = "Temporal scale") + 
+  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  #scale_color_manual(values = colset_bright)
+
+
+
 
 ggplot(imerg_combi, aes(comparison_method)) + 
   geom_bar()+ 
@@ -360,6 +379,7 @@ ggplot(imerg_combi, aes(comparison_method)) +
                                "#F4CC70", "#EBB582")) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
+
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
