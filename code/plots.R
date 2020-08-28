@@ -20,33 +20,28 @@ imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 imerg_combi <- imerg_combi[ref_type, on  = 'id']
 ###########Spatial distribution of publications
+
 study_plot2 <- subset(study_plot,continent!="Global")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 
-ggplot(data = world) + 
+global_dist <- world_map <- ggplot(data = world) + 
   geom_sf(fill = "white") + 
-  coord_sf(xlim = c(-180, 180), ylim = c(-90, 90)) + 
+  coord_sf(xlim = c(-170, 170), ylim = c(-58, 90)) + 
   geom_point(data = study_plot2, aes(lon_mean, lat_mean, 
-                                    color = continent)) + 
-  #scale_color_manual(values = c("#F0810F", "#337BAE",
-                              # "#97B8C2",
-                              # "#ACBD78",  
-                               #"#F4CC70", "#EBB582")) +  
-  
-  theme(axis.title.x = element_text(vjust = -3), 
-  axis.title.y = element_text(vjust = 3)) + # move away for axis
-  #labs(x = "Longitude", y = "Latitude")
-  xlab(label = "Longitude") +
-  ylab(label = "Latitude") + 
+                                     color = continent)) + 
+  scale_color_manual(values = mycol_continent5) + 
   theme_generic + 
-  theme(legend.title=element_blank()) + 
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-ggsave("results/plots/Global_distribution.png",
-       width = 7.2, height = 5.3, units = "in", dpi = 600)
-
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "none")
 
 ######################################
 
@@ -63,6 +58,33 @@ plot_country <- country_continents[, .('paper_count' = .N),
 
 imerg_verscount <- alg_vers[, .('vers_count' = .N),
                                by = imerg_vers]
+
+###country wise papers reordered
+
+country_plot <- ggplot(plot_country) + 
+  geom_bar(aes(x = reorder(country, -prop),
+               y = prop,
+               #color = continent, 
+               fill = continent),
+           stat = "identity") + 
+  labs(x = "Country", y = "Studies (%)") + 
+  scale_fill_manual(values = mycol_continent5) + 
+  
+  theme_small + 
+  theme(legend.position = "bottom") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  labs(fill = "Continents") + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+global_dist <- ggplotGrob(global_dist)
+
+Country_barplot + annotation_custom(grob = global_dist, xmin = 3, xmax = Inf, 
+                                    ymin = 5, ymax = Inf)
+
+ggsave("results/plots/Global_dist.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 #continent wise papers reordered
 
@@ -81,7 +103,7 @@ ggplot(plot_continents2, aes(x = year, y = paper_count, group = continent)) +
 ggplot(plot_continents, aes(x = reorder(continent, prop),
                        y = prop, fill = continent, label = scales::percent(prop))) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Continent", y = "Number of papers") + 
+  labs(x = "Continent", y = "Number of stuides") + 
   geom_text(aes(label = scales::percent(prop), hjust = 0.5), size = 3.2) + 
   scale_y_continuous(labels = scales::percent) +
   scale_fill_manual(values = c("#F0810F", "#337BAE",
@@ -96,30 +118,24 @@ ggplot(plot_continents, aes(x = reorder(continent, prop),
 ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-#continent wise papers per year
+###continent wise papers per year
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  labs(x = "Year", y = "Number of papers") + 
-  facet_grid(~continent, space = "free", scales = "free_x") + 
+  scale_fill_manual(values = mycol_continent6) + 
+  labs(x = "Year", y = "Number of studies") + 
+  facet_grid(~continent, space = "free", scales = "free_y") + 
   theme_very_small + 
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
 ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
-       height = 5.3, units = "in", dpi = 600)
+       height = 4.3, units = "in", dpi = 600)
 
 
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
-  scale_fill_manual(values = c("#F0810F", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  labs(x = "Year", y = "Number of papers") + 
+  scale_fill_manual(values = mycol_continent6) + 
+  labs(x = "Year", y = "Number of studies") + 
   #facet_grid(~continent, space = "free", scales = "free_x") + 
   theme_generic + 
   theme(legend.position = "right") + 
@@ -129,46 +145,16 @@ ggplot(study_plot) +
 
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
-#country wise papers reordered
 
-ggplot(plot_country) + 
-  geom_bar(aes(x = reorder(country, -prop),
-               y = prop,
-               #color = continent, 
-               fill = continent),
-           stat = "identity") + 
-  labs(x = "Country", y = "Studies (%)") + 
-  #scale_fill_manual(values = c("#F0810F", "#337BAE",
-                              # "#97B8C2",
-                               #"#ACBD78",  
-                               #"#F4CC70", "#EBB582")) + 
- 
-  #coord_flip() + 
-  theme_small + 
-  theme(legend.position = "bottom") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  labs(fill = "Continents") + 
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+#line plot
+Papers_year <- study_plot[, .('paper_count' = .N),
+                                by = .(continent, year)]
 
+ggplot(Papers_year, aes(x = year, y = paper_count, group = continent)) + 
+  geom_line(aes(col = continent)) + 
+  labs(x = "Year", y = "Number of studies") + 
+  theme_very_small
   
-ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
-         height = 5.3, units = "in", dpi = 600)
-
-
-ggplot(plot_country, aes(x = reorder(country, -prop),
-                       y = prop)) +
-  geom_bar(stat = "identity", color = continent) + 
-  labs(x = "Country", y = "Studies (%)") + 
-  #coord_flip() + 
-  theme_small + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
-  #labs(fill = continent)
-
-ggsave("results/plots/paperfraction_per_country.png", width = 7.2, 
-       height = 5.3, units = "in", dpi = 600)
-
-#################################################
-
 #data_continent wise
 continent_period <- study_plot[, .(id, continent, record_length)]
 
@@ -210,13 +196,17 @@ record_length_global[, continent_name := factor('Global')]
 
 #merge all the continents to a single data table
 merge_continents <- merge(record_length_asia, record_length_africa, all = TRUE)
-asia_afi_ero <- merge(merge_continents, record_length_europe, all = TRUE)
-asia_afi_ero_samer <- merge(asia_afi_ero, record_length_s_america, all = TRUE)
-asia_afi_ero_s_n_ame <- merge(asia_afi_ero_samer, record_length_n_america, all = TRUE)
-asia_afi_ero_s_n_ame_glob <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
+AFE <- merge(merge_continents, record_length_europe, all = TRUE)
+AFES <- merge(asia_afi_ero, record_length_s_america, all = TRUE)
+AFESN <- merge(asia_afi_ero_samer, record_length_n_america, all = TRUE)
+AFESNG <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
 
+#reorder the levels of continents
+AFESNG$continent_name <- factor(AFESNG$continent_name, 
+                                     levels = c("Africa", "Asia", "Europe", "Global", "South_America", 
+                                                "North_America"))
 ##and now the plot
-ggplot(asia_afi_ero_s_n_ame_glob) + 
+ggplot(AFESNG) + 
   geom_bar(aes(x= factor(V1),
       y = N,
       group = continent_name,
@@ -224,10 +214,8 @@ ggplot(asia_afi_ero_s_n_ame_glob) +
       color = continent_name),
       stat = "identity",
       position = position_dodge()) + 
-  labs(x = "Validation length (months)", y = "Papers") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE", "#97B8C2",
-                               "#739F3D","#ACBD78",  "#F4CC70",
-                               "#EBB582")) + 
+  labs(x = "Validation length (months)", y = "studies") + 
+  scale_fill_manual(values = mycol_continent6) + 
   scale_x_discrete(labels = c("0-12", "13-24", "25-36", "37-48", "48-60")) + 
   theme_generic + 
   theme(legend.title = element_blank())
@@ -248,7 +236,7 @@ imerg_combi <- subset(imerg_combi, !is.na(downscale))
 #reorder the levels of temporal_scale of imerg_combi
 imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
-                                                "18h",  "1h to 168h", "1d to 60d", 
+                                                "18h", "1d to 60d", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
 
 imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
@@ -259,7 +247,7 @@ ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) +
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   #facet_wrap(~imerg_type) + 
-  labs(x = "Temporalal scale", y = "Papers") + 
+  labs(x = "Temporalal scale", y = "studies") + 
   scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   theme_generic + 
@@ -274,7 +262,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~imerg_vers) + 
-  labs(x = "Temporalal scale", y = "Papers") + 
+  labs(x = "Temporalal scale", y = "studies") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
   theme_generic
 
@@ -286,7 +274,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~imerg_type) + 
-  labs(x = "Temporalal scale", y = "Papers") + 
+  labs(x = "Temporalal scale", y = "studies") + 
   theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
@@ -314,7 +302,7 @@ ggplot(imerg_combi, aes(temporal_scale)) +
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
   scale_y_continuous(labels=percent) + 
   facet_wrap(~year) + 
-  labs(x = "Temporalal scale", y = "Papers") + 
+  labs(x = "Temporalal scale", y = "studies") + 
   theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
  
@@ -327,11 +315,7 @@ ggsave("results/plots/Temp_scale_Year.png", width = 7.2,
 ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
-  labs(x = "Spatial scale", y = "Papers") + 
-  #scale_fill_manual(values = c("#4D648D", "#337BAE",
-                              # "#97B8C2",  "#739F3D",
-                               #"#ACBD78",  
-                              # "#F4CC70", "#EBB582")) + 
+  labs(x = "Spatial scale", y = "studies") + 
   scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   #facet_wrap(~continent) + 
@@ -344,7 +328,7 @@ ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5,
 
 ###spatial_vs_temporal_scales_scatter_plot
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
-  geom_jitter()+ 
+  geom_jitter(width = 0.20, height = 0.5)+ 
   facet_wrap(~continent) + 
   labs(x = "Spatial scale", y = "Temporal scale") + 
   scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
@@ -354,8 +338,10 @@ ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
   #theme(legend.title = IMERG_TYPE)
   #facet_grid(~, scales="free", space="free_x")
 
+
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
+
 
 ###comparison_method
 ggplot(imerg_combi, aes(ref_type, comparison_method)) + 
@@ -377,6 +363,7 @@ ggplot(imerg_combi, aes(comparison_method)) +
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
+  theme_small + 
   facet_grid(~continent, scales="free", space="free_x") + 
   theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
 
@@ -412,119 +399,15 @@ ggplot(imerg_combi, aes(continent)) +
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
 
 
-############################################3
+############################################
 
 ggplot(imerg_combi, aes(grid_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
-  labs(x = "Spatial scale", y = "Papers") + 
+  labs(x = "Spatial scale", y = "studies") + 
   scale_fill_manual(values = c("#4D648D", "#337BAE",
                                "#97B8C2",  "#739F3D",
                                "#ACBD78",  
                                "#F4CC70", "#EBB582")) + 
+  theme_small + 
   facet_wrap(~comparison_method) + 
   theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
-
-
-
-###scatter plot
-
-ggplot(na.omit(imerg_combi), aes(x=lon_mean, 
-                                 y=lat_mean, 
-                                 col = imerg_vers)) + 
-  geom_point() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(x=lon_mean, y=lat_mean,
-                                 size = record_length,
-                                 col = imerg_type)) + 
-  geom_jitter() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(x=lat_mean, y=lon_mean,
-                                 #size = record_length,
-                                 col = imerg_type)) + 
-  geom_point() + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(imerg_vers, year)) + 
-  geom_line()
-
-ggplot(na.omit(imerg_combi), aes(comparison_method, downscale)) + 
-  geom_jitter()
-
-ggplot(na.omit(imerg_combi), aes(imerg_vers, imerg_type, color = imerg_type)) + 
-  geom_jitter()
-
-ggplot(na.omit(imerg_combi), aes(imerg_type, record_length)) + 
-  geom_jitter()
-
-
-
-###box plot
-ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
-                                 y=record_length,
-                                 fill= downscale)) +
-  geom_boxplot(alpha=0.4) 
-
-ggplot(na.omit(imerg_combi), aes(x=imerg_vers, 
-                                 y=record_length,
-                                 fill = imerg_type)) +
-  geom_boxplot(alpha=0.4) + 
-  theme_classic()
-
-
-ggplot(na.omit(imerg_combi), aes(x=reorder(imerg_type, record_length), 
-                                 y=record_length)) + 
-  facet_wrap(~year) + 
-  geom_boxplot(alpha=0.4) + 
-  theme_classic()
-
-ggplot(na.omit(imerg_combi), aes(x=reorder(imerg_type, record_length), 
-                                 y=record_length, color = year)) + 
-  geom_jitter() + 
-  theme_classic()
-
-
-
-ggplot(study_plot, aes(record_length, continent)) + 
-  geom_boxplot()
-
-ggplot(na.omit(imerg_combi), aes(record_length, continent)) + 
-  geom_boxplot()
-
-
-
-ggplot(na.omit(imerg_combi), aes(factor(temporal_scale), factor(grid_scale), color = temporal_scale)) + 
-  geom_jitter()
-
-ggplot(na.omit(imerg_combi), aes(temporal_scale)) + 
-  geom_bar(aes(y = (..count..)/sum(..count..))) + 
-  scale_y_continuous(labels=percent) +
-  facet_wrap(~continent) + 
-  labs(x = "Temporal scale", y = "Papers") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, vjust = 0.9))
-####################
-
-###IMERG_Vers_ vs_year
-  
-imerg_vers_count <- imerg_combi[, .('vers_count' = .N),
-                                  by = .(imerg_vers, year)]
-
-ggplot(imerg_vers_count, aes(year, vers_count, color = imerg_vers)) + 
-  geom_line()
-
-###Reference_type_vs_number
-
-reftype_count <- studies[, .(id, 'count_pap' = .N),
-                                by = ref_type]
-
-ggplot(reftype_count, aes(x = reorder(ref_type, count_pap))) + 
-  geom_bar() + 
-  labs(x = "Reference type", y = "Number of papers") + 
-  geom_text(aes(x = ref_type, 
-                y = count_pap, label = count_pap, hjust = -0.2)) + 
-  coord_flip() + 
-  theme_generic
-
-ggsave("results/plots/Ref_type_vs_papers.png", width = 7.2, 
-       height = 5.3, units = "in", dpi = 600)
