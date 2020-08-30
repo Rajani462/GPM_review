@@ -20,6 +20,12 @@ imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 imerg_combi <- imerg_combi[ref_type, on  = 'id']
 
+write.xlsx(imerg_combi, 'imerg_combi2.xlsx')
+
+trial2 <- study_plot[, .(alg_vers, run_type, study_gridscale, study_tempscale, 
+                         study_compmthod, study_compscale, ref_type), on = 'id']
+
+write.xlsx(trial2, 'trial2.xlsx')
 ###before plotting remove NA's from imerg_combi
 
 imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
