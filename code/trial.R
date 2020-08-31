@@ -1,4 +1,4 @@
-n2 <- 5                                               # Higher amount of hex colors
+n2 <- 3                                               # Higher amount of hex colors
 hex_codes2 <- hue_pal()(n2)                             # Identify hex codes
 show_col(hex_codes2)  
 hex_codes2
@@ -144,3 +144,46 @@ ggplot(na.omit(imerg_combi), aes(imerg_vers, imerg_type, color = imerg_type)) +
 
 ggplot(na.omit(imerg_combi), aes(imerg_type, record_length)) + 
   geom_jitter()
+
+
+###spatio_temporal_vs_papers_bar_plot----
+
+g1 <- ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(x = "Spatial scale", y = "studies") + 
+  scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
+  facet_grid(~continent, scales="free") + 
+  theme_small + 
+  labs(fill = "IMERG_TYPE") + 
+  theme(legend.position = "none") + 
+  theme(axis.title.y = element_blank())
+
+g2 <- ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(x = "Temporalal scale", y = "studies") + 
+  scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
+  facet_grid(~continent, scales="free") + 
+  theme_small + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
+  labs(fill = "IMERG_TYPE") + 
+  theme(legend.position = "none") + 
+  theme(axis.title.y = element_blank())
+
+g3 <- ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
+  geom_jitter(width = 0.20, height = 0.2)+ 
+  labs(x = "Spatial scale", y = "Temporal scale") + 
+  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  facet_grid(~continent, scales = "free") + 
+  theme_small + 
+  labs(col = "IMERG_TYPE") + 
+  theme(legend.position = "bottom")
+
+
+g4 <- grid.arrange(arrangeGrob(g1, g2, nrow=2), g3, nrow = 1)
+
+ggsave("results/plots/Rajani.png", g4, width = 8.7, 
+       height = 5.3, units = "in", dpi = 600)
+
+##https://www.r-graph-gallery.com/261-multiple-graphs-on-same-page.html

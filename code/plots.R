@@ -20,12 +20,18 @@ imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 imerg_combi <- imerg_combi[ref_type, on  = 'id']
 
-write.xlsx(imerg_combi, 'imerg_combi2.xlsx')
 
-trial2 <- study_plot[, .(alg_vers, run_type, study_gridscale, study_tempscale, 
+
+imerg_combi$continent <- factor(imerg_combi$continent, 
+                                levels = c("Africa", "Asia", "Europe", "North America",
+                                           "South America", "Global"))
+
+#write.xlsx(imerg_combi, 'imerg_combi2.xlsx')
+
+#trial2 <- study_plot[, .(alg_vers, run_type, study_gridscale, study_tempscale, 
                          study_compmthod, study_compscale, ref_type), on = 'id']
 
-write.xlsx(trial2, 'trial2.xlsx')
+#write.xlsx(trial2, 'trial2.xlsx')
 ###before plotting remove NA's from imerg_combi
 
 imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
@@ -42,8 +48,8 @@ imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale,
 
 imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
                                      levels = c("IMERG_E", "IMERG_L", "IMERG_F"))
+#reorder the levels of continents
 
-###temporal_scale_vs_papers_barplot----
 
 
 ###########Spatial distribution of studies----
@@ -183,7 +189,7 @@ ggplot(Papers_year, aes(x = year, y = paper_count, group = continent)) +
   theme_very_small
   
 #data_continent wise
-continent_period <- study_plot[, .(id, continent, record_length)]
+continent_period <- study_plot[, .(id, continent, record_length, year)]
 
 count_pap <- study_plot[, .(id, continent, record_length)]
 
@@ -224,14 +230,11 @@ record_length_global[, continent_name := factor('Global')]
 #merge all the continents to a single data table
 merge_continents <- merge(record_length_asia, record_length_africa, all = TRUE)
 AFE <- merge(merge_continents, record_length_europe, all = TRUE)
-AFES <- merge(asia_afi_ero, record_length_s_america, all = TRUE)
-AFESN <- merge(asia_afi_ero_samer, record_length_n_america, all = TRUE)
-AFESNG <- merge(asia_afi_ero_s_n_ame, record_length_global, all = TRUE)
+AFES <- merge(AFE, record_length_s_america, all = TRUE)
+AFESN <- merge(AFES, record_length_n_america, all = TRUE)
+AFESNG <- merge(AFESN, record_length_global, all = TRUE)
 
-#reorder the levels of continents
-AFESNG$continent_name <- factor(AFESNG$continent_name, 
-                                     levels = c("Africa", "Asia", "Europe", "Global", "South_America", 
-                                                "North_America"))
+
 ####Validation_length plots----
 ggplot(AFESNG) + 
   geom_bar(aes(x= factor(V1),
@@ -251,13 +254,15 @@ ggsave("results/plots/validation_lengths_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
   
 ##########################################
+######Temporal_scale_vs_papers_bar_plot----
 
 ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   #facet_wrap(~imerg_type) + 
   labs(x = "Temporalal scale", y = "studies") + 
-  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  #scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) + 
@@ -265,6 +270,7 @@ ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) +
 
 ggsave("results/plots/Temporal_scale_vs_papers.png", width = 9.5,
        height = 5.3, units = "in", dpi = 600)
+
 ###temporal_scale_vs_IMERG_version
 
 ggplot(imerg_combi, aes(temporal_scale)) + 
@@ -306,9 +312,8 @@ ggplot(imerg_combi, aes(imerg_type, imerg_vers, color = imerg_type)) +
 ggsave("results/plots/IMERG_TYPE_vs_VERSION.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-###---
-### Temporal_scale_vs_Year----
 
+### Temporal_scale_vs_Year----
 
 ggplot(imerg_combi, aes(temporal_scale)) + 
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
@@ -328,7 +333,7 @@ ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
   scale_y_continuous(labels=percent) + 
   labs(x = "Spatial scale", y = "studies") + 
-  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
   facet_grid(~continent, scales="free", space="free_x") + 
   #facet_wrap(~continent) + 
   #theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
@@ -340,15 +345,30 @@ ggsave("results/plots/Spatial_scale_vs_papers.png", width = 9.5,
 
 ###spatial_vs_temporal_scales_scatter_plot----
 ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) + 
-  geom_jitter(width = 0.20, height = 0.5)+ 
-  facet_wrap(~continent) + 
+  geom_jitter(width = 0.20, height = 0.2)+ 
+  #facet_wrap(~continent) + 
   labs(x = "Spatial scale", y = "Temporal scale") + 
-  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  #scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
+  scale_fill_manual(values = palettes_bright$colset_cheer_brights) + 
+  facet_grid(~continent, scales = "free") + 
   #scale_color_manual(values = colset_bright)
-  theme_small + 
+  theme_generic + 
   labs(col = "IMERG_TYPE")
   #theme(legend.title = IMERG_TYPE)
   #facet_grid(~, scales="free", space="free_x")
+
+ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
+
+spatio_tempo <- imerg_combi[, .('count' = .N),
+                               by = .(temporal_scale, grid_scale)]
+
+
+ggplot(spatio_tempo, aes(grid_scale, temporal_scale, color = count)) + 
+  geom_point(aes(size = count)) + 
+  theme_generic
+
+
 
 
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
