@@ -21,7 +21,9 @@ imerg_combi <- imerg_combi[study_compscale, on  = 'id']
 imerg_combi <- imerg_combi[ref_type, on  = 'id']
 
 
-
+study_plot$continent <- factor(study_plot$continent, 
+                                levels = c("Africa", "Asia", "Europe", "North America",
+                                           "South America", "Global"))
 imerg_combi$continent <- factor(imerg_combi$continent, 
                                 levels = c("Africa", "Asia", "Europe", "North America",
                                            "South America", "Global"))
@@ -29,10 +31,12 @@ imerg_combi$continent <- factor(imerg_combi$continent,
 #write.xlsx(imerg_combi, 'imerg_combi2.xlsx')
 
 #trial2 <- study_plot[, .(alg_vers, run_type, study_gridscale, study_tempscale, 
-                         study_compmthod, study_compscale, ref_type), on = 'id']
+                         #study_compmthod, study_compscale, ref_type), on = 'id']
 
 #write.xlsx(trial2, 'trial2.xlsx')
 ###before plotting remove NA's from imerg_combi
+
+trial3 <- subset(imerg_combi, !is.na .(imerg_type, imerg_vers))
 
 imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
 imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
@@ -124,14 +128,13 @@ ggsave("results/plots/Global_dist.png",
 plot_continents <- study_plot[, .('paper_count' = .N),
                               by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
-
+###Line_plot
 plot_continents2 <- study_plot[, .('paper_count' = .N),
                               by = .(continent, year)]
 
 ggplot(plot_continents2, aes(x = year, y = paper_count, group = continent)) + 
   geom_line(aes(color = continent))
-  
-
+################  
 
 ggplot(plot_continents, aes(x = reorder(continent, prop),
                        y = prop, fill = continent, label = scales::percent(prop))) + 
@@ -151,7 +154,7 @@ ggplot(plot_continents, aes(x = reorder(continent, prop),
 ggsave("results/plots/paperfraction_per_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-###continent wise papers per year
+###continent wise papers per year----
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
   scale_fill_manual(values = mycol_continent6) + 
@@ -173,7 +176,7 @@ ggplot(study_plot) +
   theme_generic + 
   theme(legend.position = "right") + 
   theme(legend.direction = "vertical") + 
-  theme(legend.title = element_blank())
+  theme(legend.title = element_blank()) + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
