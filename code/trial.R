@@ -187,3 +187,11 @@ ggsave("results/plots/Rajani.png", g4, width = 8.7,
        height = 5.3, units = "in", dpi = 600)
 
 ##https://www.r-graph-gallery.com/261-multiple-graphs-on-same-page.html
+
+
+###Validation_length----
+ggplot(study_plot, aes(factor(year), record_length)) + 
+  geom_boxplot()
+
+ggplot(study_plot, aes(factor(year), record_length)) + 
+  geom_jitter(width = 0.2)
