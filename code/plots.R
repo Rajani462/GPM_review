@@ -211,6 +211,9 @@ plot_asia <- asia[, .('count' = .N),
 trial <- study_plot[, .( 'count' = .N),
               by = .(record_length, continent)]
 
+ggplot(trial, aes(record_length, count)) + 
+  geom_point()
+
 #divide the record_lengths into ranges (10 months each)
 record_length_asia <-as.data.table(table(cut(asia$record_length, breaks = seq(0, 60, by = 12))))
 record_length_asia[, continent_name := factor('Asia')]
