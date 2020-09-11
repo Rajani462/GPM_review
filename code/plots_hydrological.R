@@ -14,7 +14,7 @@ ggplot(na.omit(hydro_metrics), aes(x=Data_type,
 
 NSE <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= NSE)) + 
   labs(x = "IMERG_RUN", y = "NSE") + 
-  geom_jitter(aes(shape=Model, color = Location), size= 3) + 
+  geom_jitter(width = 0.2, aes(shape=Model, color = Location), size= 3) + 
   #scale_shape_manual(values=c(15, 13, 18, 20, 25)) + 
   theme_generic
 
@@ -22,7 +22,7 @@ NSE <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= NSE)) +
 
 BIAS <- ggplot(na.omit(hydro_metrics), aes(x=Data_type, y= Bias)) + 
   labs(x = "IMERG_RUN", y = "Realative bias (%)") + 
-  geom_jitter(aes(shape=Model, color = Location), size= 3) + 
+  geom_jitter(width = 0.2, aes(shape=Model, color = Location), size= 3) + 
   scale_color_discrete(guide = "none") + 
   #facet_wrap(~Location) + 
   theme_generic + 
