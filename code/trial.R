@@ -195,3 +195,21 @@ ggplot(study_plot, aes(factor(year), record_length)) +
 
 ggplot(study_plot, aes(factor(year), record_length)) + 
   geom_jitter(width = 0.2)
+
+ggplot(study_plot, aes(x = record_length, y = temporal_scale)) + 
+  geom_point() + 
+  theme_generic
+  
+ggplot(study_plot, aes(factor(record_length))) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(x = "Spatial scale", y = "studies") + 
+  #scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
+  facet_grid(~continent, scales="free") + 
+  theme_small + 
+  labs(fill = "IMERG_TYPE") + 
+  theme(legend.position = "none") + 
+  theme(axis.title.y = element_blank())
+
+
+

@@ -8,7 +8,7 @@ study_plot <- studies[, .(id, study_area, study_area_type,
                           country, continent, 
                           lat_mean, lon_mean, area,
                           variable, surface, 
-                          downscale, record_length,
+                          downscale, record_length, temporal_scale, 
                           year, journal)]
 
 
