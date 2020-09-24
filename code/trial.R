@@ -193,12 +193,13 @@ ggsave("results/plots/Rajani.png", g4, width = 8.7,
 ggplot(study_plot, aes(factor(year), record_length)) + 
   geom_boxplot()
 
-ggplot(study_plot, aes(factor(year), record_length)) + 
-  geom_jitter(width = 0.2)
+ggplot(study_plot, aes(factor(year), record_length, color = continent)) + 
+  geom_jitter(width = 0.2) + 
+  theme_small
 
 ggplot(study_plot, aes(x = record_length, y = temporal_scale)) + 
   geom_point() + 
-  theme_generic
+  theme_small
   
 ggplot(study_plot, aes(factor(record_length))) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
