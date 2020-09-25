@@ -215,9 +215,13 @@ ggplot(study_plot, aes(factor(record_length))) +
 ggplot(refr_type, aes(ref_type, record_length)) + 
   geom_jitter(width = 0.2) + 
   theme_small
+####################################
+refr_type[, ref_count := .N, by = ref_type]
 
-refr_type2 <- refr_type[, ref_count := .N,
-                            by = ref_type]
+refr_type[, tempo_count := .N, by = temporal_scale]
+
+refr_type[, reclength_count := .N, by = record_length]
+
 
 refr_type <- refr_type[study_tempscale, on = 'id']
 
@@ -225,6 +229,12 @@ refr_type$temporal_scale <- factor(refr_type$temporal_scale,
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
                                                 "18h", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
+refr_type$ref_type <- factor(refr_type$ref_type, 
+                                   levels = c("g", "s", "r", "m"))
+
+saveRDS(refr_type, file = './data/refr_record_length.Rds')
+########################
+refr_type <- readRDS('./data/refr_record_length.Rds')
 
 
 ggplot(refr_type, aes(record_length, group = ref_type)) + 
@@ -233,6 +243,54 @@ ggplot(refr_type, aes(record_length, group = ref_type)) +
 ggplot(refr_type, aes(fill= ref_type, y=ref_count, x=record_length)) + 
   geom_bar(position="dodge", stat="identity")
 
-ggplot(refr_type, aes(ref_type, temporal_scale)) + 
-  geom_jitter(width = 0.2) + 
+ggplot(refr_type, aes(record_length, temporal_scale)) + 
+  geom_jitter() + 
   theme_small
+
+ggplot(refr_type, aes(ref_type, record_length)) + 
+  geom_jitter() + 
+  theme_small
+
+ggplot(refr_type, aes(temporal_scale, record_length)) + 
+  facet_grid(~ref_type, scales="free") +
+  geom_bar(position="dodge", stat="identity")
+
+ggplot(refr_type, aes(temporal_scale, tempo_count)) + 
+  facet_wrap(~continent, scales="free") +
+  geom_bar(position="dodge", stat="identity")
+
+ggplot(refr_type, aes(temporal_scale, record_length)) + 
+  facet_wrap(~continent) +
+  geom_bar(position="dodge", stat="identity")
+
+ggplot(refr_type, aes(temporal_scale, record_length, col = ref_type, shape = ref_type)) + 
+  #facet_wrap(~continent) +
+  geom_jitter(width = 0.3) + 
+  theme_generic
+
+ggplot(refr_type, aes(temporal_scale, ref_type, size = record_length, col = record_length)) + 
+  #facet_wrap(~continent) +
+  geom_jitter() + 
+  theme_generic
+
+
+ggplot(refr_type, aes(ref_type, record_length)) + 
+  #facet_wrap(~continent) +
+  geom_boxplot()
+
+
+
+ggplot(refr_type, aes(continent, record_length)) + 
+  facet_grid(~year) +
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggplot(refr_type, aes(factor(year), record_length)) + 
+  facet_grid(~ref_type) +
+  geom_boxplot()+ 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+
+ggplot(refr_type, aes(temporal_scale, ref_type)) + 
+  facet_wrap(~continent) +
+  geom_jitter(width = 0.2)
