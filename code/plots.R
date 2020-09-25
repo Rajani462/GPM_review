@@ -8,7 +8,7 @@ study_plot <- studies[, .(id, study_area, study_area_type,
                           country, continent, 
                           lat_mean, lon_mean, area,
                           variable, surface, 
-                          downscale, record_length, temporal_scale, 
+                          downscale, record_length, 
                           year, journal)]
 
 
@@ -18,7 +18,7 @@ imerg_combi <- imerg_combi[study_gridscale, on = 'id']
 imerg_combi <- imerg_combi[study_tempscale, on = 'id']
 imerg_combi <- imerg_combi[study_compmthod, on  = 'id']
 imerg_combi <- imerg_combi[study_compscale, on  = 'id']
-imerg_combi <- imerg_combi[ref_type, on  = 'id']
+
 
 
 study_plot$continent <- factor(study_plot$continent, 

@@ -190,7 +190,7 @@ ggsave("results/plots/Rajani.png", g4, width = 8.7,
 
 
 ###Validation_length----
-ggplot(study_plot, aes(factor(year), record_length)) + 
+ggplot(refr_type, aes(factor(year), record_length)) + 
   geom_boxplot()
 
 ggplot(study_plot, aes(factor(year), record_length, color = continent)) + 
@@ -212,5 +212,27 @@ ggplot(study_plot, aes(factor(record_length))) +
   theme(legend.position = "none") + 
   theme(axis.title.y = element_blank())
 
+ggplot(refr_type, aes(ref_type, record_length)) + 
+  geom_jitter(width = 0.2) + 
+  theme_small
+
+refr_type2 <- refr_type[, ref_count := .N,
+                            by = ref_type]
+
+refr_type <- refr_type[study_tempscale, on = 'id']
+
+refr_type$temporal_scale <- factor(refr_type$temporal_scale, 
+                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
+                                                "18h", 
+                                                "daily",  "monthly",  "seasonal", "annual"))
 
 
+ggplot(refr_type, aes(record_length, group = ref_type)) + 
+  geom_bar()
+
+ggplot(refr_type, aes(fill= ref_type, y=ref_count, x=record_length)) + 
+  geom_bar(position="dodge", stat="identity")
+
+ggplot(refr_type, aes(ref_type, temporal_scale)) + 
+  geom_jitter(width = 0.2) + 
+  theme_small
