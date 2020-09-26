@@ -237,8 +237,14 @@ saveRDS(refr_type, file = './data/refr_record_length.Rds')
 refr_type <- readRDS('./data/refr_record_length.Rds')
 
 
-ggplot(refr_type, aes(record_length, group = ref_type)) + 
-  geom_bar()
+refr_type$group = cut(refr_type$record_length,c(0,12,24,36,48,60))
+levels(refr_type$group) = c("0-12","13-24","25-36","37-48", "49-60")
+
+
+ggplot(refr_type, aes(factor(group))) +
+  geom_bar() + (labels = scales::percent_format(accuracy = 1)) + 
+  facet_grid(~ref_type) + 
+  theme_generic
 
 ggplot(refr_type, aes(fill= ref_type, y=ref_count, x=record_length)) + 
   geom_bar(position="dodge", stat="identity")
@@ -247,7 +253,7 @@ ggplot(refr_type, aes(record_length, temporal_scale)) +
   geom_jitter() + 
   theme_small
 
-ggplot(refr_type, aes(ref_type, record_length)) + 
+ggplot(refr_type, aes(ref_type, group)) + 
   geom_jitter() + 
   theme_small
 
