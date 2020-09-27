@@ -253,21 +253,24 @@ ggplot(refr_type, aes(record_length, temporal_scale)) +
   geom_jitter() + 
   theme_small
 
-ggplot(refr_type, aes(ref_type, group)) + 
-  geom_jitter() + 
-  theme_small
+ggplot(refr_type, aes(ref_type, group, col = continent)) + 
+  geom_jitter(height = 0.2) + 
+  theme_generic
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_grid(~ref_type, scales="free") +
-  geom_bar(position="dodge", stat="identity")
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggplot(refr_type, aes(temporal_scale, tempo_count)) + 
   facet_wrap(~continent, scales="free") +
-  geom_bar(position="dodge", stat="identity")
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_wrap(~continent) +
-  geom_bar(position="dodge", stat="identity")
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggplot(refr_type, aes(temporal_scale, record_length, col = ref_type, shape = ref_type)) + 
   #facet_wrap(~continent) +
