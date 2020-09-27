@@ -186,7 +186,7 @@ g4 <- grid.arrange(arrangeGrob(g1, g2, nrow=2), g3, nrow = 1)
 ggsave("results/plots/Rajani.png", g4, width = 8.7, 
        height = 5.3, units = "in", dpi = 600)
 
-##https://www.r-graph-gallery.com/261-multiple-graphs-on-same-page.html
+#https://www.r-graph-gallery.com/261-multiple-graphs-on-same-page.html####
 
 
 ###Validation_length----
@@ -242,20 +242,27 @@ levels(refr_type$group) = c("0-12","13-24","25-36","37-48", "49-60")
 
 
 ggplot(refr_type, aes(factor(group))) +
-  geom_bar() + (labels = scales::percent_format(accuracy = 1)) + 
+  geom_bar() + 
   facet_grid(~ref_type) + 
-  theme_generic
+  theme_generic + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggplot(refr_type, aes(fill= ref_type, y=ref_count, x=record_length)) + 
   geom_bar(position="dodge", stat="identity")
 
-ggplot(refr_type, aes(record_length, temporal_scale)) + 
+ggplot(refr_type, aes(group, temporal_scale)) + 
   geom_jitter() + 
   theme_small
 
 ggplot(refr_type, aes(ref_type, group, col = continent)) + 
   geom_jitter(height = 0.2) + 
   theme_generic
+
+ggplot(refr_type, aes(temporal_scale, record_length)) + 
+  #facet_grid(~ref_type, scales="free") +
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_grid(~ref_type, scales="free") +
@@ -271,6 +278,7 @@ ggplot(refr_type, aes(temporal_scale, record_length)) +
   facet_wrap(~continent) +
   geom_bar(position="dodge", stat="identity") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
 
 ggplot(refr_type, aes(temporal_scale, record_length, col = ref_type, shape = ref_type)) + 
   #facet_wrap(~continent) +
@@ -297,9 +305,27 @@ ggplot(refr_type, aes(continent, record_length)) +
 ggplot(refr_type, aes(factor(year), record_length)) + 
   facet_grid(~ref_type) +
   geom_boxplot()+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme(axis.text.x = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
 
 
 ggplot(refr_type, aes(temporal_scale, ref_type)) + 
   facet_wrap(~continent) +
   geom_jitter(width = 0.2)
+
+#With Countries####
+ggplot(refr_type, aes(country, record_length)) + 
+  facet_wrap(~continent, scales = 'free') +
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggplot(refr_type, aes(country, group)) + 
+  #facet_wrap(~continent, scales = 'free') +
+  geom_jitter(height = 0.2, width = 0.2) + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+
+ggplot(refr_type, aes(country, temporal_scale)) + 
+  geom_jitter(height = 0.2) + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+
