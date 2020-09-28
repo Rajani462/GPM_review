@@ -234,7 +234,7 @@ refr_type$ref_type <- factor(refr_type$ref_type,
 
 saveRDS(refr_type, file = './data/refr_record_length.Rds')
 ########################
-refr_type <- readRDS('./data/refr_record_length.Rds')
+refr_type <- readRDS('./data/refr_record_length.Rds')#import data####
 
 
 refr_type$group = cut(refr_type$record_length,c(0,12,24,36,48,60))
@@ -247,7 +247,7 @@ ggplot(refr_type, aes(factor(group))) +
   theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
-ggplot(refr_type, aes(fill= ref_type, y=ref_count, x=record_length)) + 
+ggplot(refr_type, aes(fill= ref_type, y=ref_count, x= factor(record_length))) + 
   geom_bar(position="dodge", stat="identity")
 
 ggplot(refr_type, aes(group, temporal_scale)) + 
@@ -295,28 +295,48 @@ ggplot(refr_type, aes(ref_type, record_length)) +
   #facet_wrap(~continent) +
   geom_boxplot()
 
-
-
 ggplot(refr_type, aes(continent, record_length)) + 
   facet_grid(~year) +
   geom_bar(position="dodge", stat="identity") + 
+  theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggplot(refr_type, aes(factor(year), record_length)) + 
+  facet_grid(~continent) +
+  geom_bar(position="dodge", stat="identity") + 
+  theme_generic + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+
+ggplot(refr_type, aes(factor(year), record_length)) + 
+  #_grid(~ref_type) +
+  geom_boxplot()+ 
+  theme_generic
 
 ggplot(refr_type, aes(factor(year), record_length)) + 
   facet_grid(~ref_type) +
   geom_boxplot()+ 
+  theme_generic + 
   theme(axis.text.x = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
-
 
 ggplot(refr_type, aes(temporal_scale, ref_type)) + 
   facet_wrap(~continent) +
-  geom_jitter(width = 0.2)
+  geom_jitter(width = 0.2, height = 0.2) + 
+  theme_generic + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 #With Countries####
-ggplot(refr_type, aes(country, record_length)) + 
-  facet_wrap(~continent, scales = 'free') +
-  geom_bar(position="dodge", stat="identity") + 
+ggplot(refr_type, aes(reorder(country, record_length), record_length)) + 
+  #facet_wrap(~continent, scales = 'free') +
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  theme(axis.text.y = element_text(angle = 20, hjust = 0.8, vjust = 0.9))
+  
+ggplot(refr_type, aes(country, reclength_count)) + 
+    facet_wrap(~group, scales = 'free') +
+    geom_bar(stat="identity") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  
 
 ggplot(refr_type, aes(country, group)) + 
   #facet_wrap(~continent, scales = 'free') +
@@ -326,6 +346,10 @@ ggplot(refr_type, aes(country, group)) +
 
 ggplot(refr_type, aes(country, temporal_scale)) + 
   geom_jitter(height = 0.2) + 
+  theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
-
+ggplot(refr_type, aes(group, temporal_scale)) + 
+  geom_jitter(height = 0.2, width = 0.2) + 
+  theme_generic + 
+  theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
