@@ -218,12 +218,12 @@ ggplot(refr_type, aes(ref_type, record_length)) +
 ####################################
 refr_type[, ref_count := .N, by = ref_type]
 
+refr_type <- refr_type[study_tempscale, on = 'id']
+
 refr_type[, tempo_count := .N, by = temporal_scale]
 
 refr_type[, reclength_count := .N, by = record_length]
 
-
-refr_type <- refr_type[study_tempscale, on = 'id']
 
 refr_type$temporal_scale <- factor(refr_type$temporal_scale, 
                                      levels = c("0.5h", "1h", "3h", "6h", "12h",
@@ -261,6 +261,7 @@ ggplot(refr_type, aes(ref_type, group, col = continent)) +
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   #facet_grid(~ref_type, scales="free") +
   geom_bar(position="dodge", stat="identity") + 
+  theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 
@@ -268,6 +269,18 @@ ggplot(refr_type, aes(temporal_scale, record_length)) +
   facet_grid(~ref_type, scales="free") +
   geom_bar(position="dodge", stat="identity") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggplot(refr_type, aes(country, ref_count)) + 
+  facet_grid(~continent, scales="free") +
+  geom_bar(position="dodge", stat="identity") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+
+ggplot(refr_type, aes(ref_type)) + 
+  geom_bar() + 
+  facet_grid(~continent, scales="free") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
 
 ggplot(refr_type, aes(temporal_scale, tempo_count)) + 
   facet_wrap(~continent, scales="free") +
