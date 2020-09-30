@@ -271,21 +271,42 @@ ggplot(refr_type, aes(temporal_scale, record_length)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 ggplot(refr_type, aes(country, ref_count)) + 
-  facet_grid(~continent, scales="free") +
+  #facet_grid(~continent, scales="free") +
   geom_bar(position="dodge", stat="identity") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 
-ggplot(refr_type, aes(ref_type)) + 
-  geom_bar() + 
-  facet_grid(~continent, scales="free") +
+#Relative_frequencies_Reference types####
+
+ggplot(refr_type, aes(ref_type, group = continent)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  #geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=scales::percent) + 
+  facet_grid(~continent) + 
+  ylab("Relative frequencies") + 
+  xlab("Reference types") + 
+  scale_x_discrete(labels = c("Gauge", "satellite", "Radar", "Model")) + 
+  theme_very_small + 
+  theme(legend.position = "none") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  
+ggsave("results/plots/Relative_freq_Reftypes.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
+ggplot(refr_type, aes(ref_type, group = continent)) + 
+  #geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") + 
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=scales::percent) + 
+  facet_grid(~year) + 
+  ylab("Relative frequencies") + 
+  xlab("Reference types") + 
+  scale_x_discrete(labels = c("Gauge", "satellite", "Radar", "Model")) + 
+  theme_very_small + 
+  theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 
-ggplot(refr_type, aes(temporal_scale, tempo_count)) + 
-  facet_wrap(~continent, scales="free") +
-  geom_bar(position="dodge", stat="identity") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_wrap(~continent) +
@@ -305,19 +326,24 @@ ggplot(refr_type, aes(temporal_scale, ref_type, size = record_length, col = reco
 
 
 ggplot(refr_type, aes(ref_type, record_length)) + 
-  #facet_wrap(~continent) +
+  facet_grid(~year) +
   geom_boxplot()
 
 ggplot(refr_type, aes(continent, record_length)) + 
   facet_grid(~year) +
   geom_bar(position="dodge", stat="identity") + 
-  theme_generic + 
+  #geom_boxplot() + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/plots/record_length_vs_year.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(factor(year), record_length)) + 
   facet_grid(~continent) +
   geom_bar(position="dodge", stat="identity") + 
-  theme_generic + 
+  #geom_boxplot() + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
 
