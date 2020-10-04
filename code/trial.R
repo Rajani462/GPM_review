@@ -153,7 +153,7 @@ g1 <- ggplot(imerg_combi, aes(grid_scale, fill = imerg_type)) +
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
   labs(x = "Spatial scale", y = "studies") + 
   scale_fill_manual(values = c("#F8766D", "#00BA38", "#619CFF")) + 
-  facet_grid(~continent, scales="free") + 
+  facet_grid(~continent) + 
   theme_small + 
   labs(fill = "IMERG_TYPE") + 
   theme(legend.position = "none") + 
@@ -240,23 +240,34 @@ refr_type <- readRDS('./data/refr_record_length.Rds')#import data####
 refr_type$group = cut(refr_type$record_length,c(0,12,24,36,48,60))
 levels(refr_type$group) = c("0-12","13-24","25-36","37-48", "49-60")
 
+refr_type <- subset(refr_type, !is.na(group))
+refr_type <- subset(refr_type, !is.na(temporal_scale))
+
 
 ggplot(refr_type, aes(factor(group))) +
   geom_bar() + 
   facet_grid(~ref_type) + 
+  labs(x = "record_length") + 
   theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
-
-ggplot(refr_type, aes(fill= ref_type, y=ref_count, x= factor(record_length))) + 
-  geom_bar(position="dodge", stat="identity")
+ggsave("results/1.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(group, temporal_scale)) + 
-  geom_jitter() + 
+  geom_jitter(width = 0.2, height = 0.2) + 
+  labs(x = "record_length") + 
   theme_small
+
+ggsave("results/2.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(ref_type, group, col = continent)) + 
   geom_jitter(height = 0.2) + 
+  labs(y = "record_length") + 
   theme_generic
+ggsave("results/3.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   #facet_grid(~ref_type, scales="free") +
@@ -264,11 +275,18 @@ ggplot(refr_type, aes(temporal_scale, record_length)) +
   theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
+ggsave("results/4.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_grid(~ref_type, scales="free") +
   geom_bar(position="dodge", stat="identity") + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/5.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(country, ref_count)) + 
   #facet_grid(~continent, scales="free") +
@@ -288,7 +306,7 @@ ggplot(refr_type, aes(ref_type, group = continent)) +
   scale_x_discrete(labels = c("Gauge", "satellite", "Radar", "Model")) + 
   theme_very_small + 
   theme(legend.position = "none") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) 
   
 ggsave("results/plots/Relative_freq_Reftypes.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
@@ -305,13 +323,19 @@ ggplot(refr_type, aes(ref_type, group = continent)) +
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
-
+ggsave("results/6.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 
 ggplot(refr_type, aes(temporal_scale, record_length)) + 
   facet_wrap(~continent) +
   geom_bar(position="dodge", stat="identity") + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/7.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+  
 
 
 ggplot(refr_type, aes(temporal_scale, record_length, col = ref_type, shape = ref_type)) + 
@@ -319,15 +343,24 @@ ggplot(refr_type, aes(temporal_scale, record_length, col = ref_type, shape = ref
   geom_jitter(width = 0.3) + 
   theme_generic
 
+ggsave("results/8.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 ggplot(refr_type, aes(temporal_scale, ref_type, size = record_length, col = record_length)) + 
   #facet_wrap(~continent) +
-  geom_jitter() + 
+  geom_jitter(height = 0.3, width = 0.3) + 
   theme_generic
 
+ggsave("results/9.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(ref_type, record_length)) + 
   facet_grid(~year) +
-  geom_boxplot()
+  geom_boxplot() + 
+  theme_small
+
+ggsave("results/10.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(continent, record_length)) + 
   facet_grid(~year) +
@@ -346,11 +379,17 @@ ggplot(refr_type, aes(factor(year), record_length)) +
   theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
 
+ggsave("results/11.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 
 ggplot(refr_type, aes(factor(year), record_length)) + 
   #_grid(~ref_type) +
   geom_boxplot()+ 
   theme_generic
+
+ggsave("results/12.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(factor(year), record_length)) + 
   facet_grid(~ref_type) +
@@ -358,11 +397,17 @@ ggplot(refr_type, aes(factor(year), record_length)) +
   theme_generic + 
   theme(axis.text.x = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
 
+ggsave("results/13.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 ggplot(refr_type, aes(temporal_scale, ref_type)) + 
   facet_wrap(~continent) +
   geom_jitter(width = 0.2, height = 0.2) + 
   theme_generic + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/14.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 #With Countries####
 ggplot(refr_type, aes(reorder(country, record_length), record_length)) + 
@@ -374,21 +419,34 @@ ggplot(refr_type, aes(reorder(country, record_length), record_length)) +
 ggplot(refr_type, aes(country, reclength_count)) + 
     facet_wrap(~group, scales = 'free') +
     geom_bar(stat="identity") + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
   
 
 ggplot(refr_type, aes(country, group)) + 
   #facet_wrap(~continent, scales = 'free') +
   geom_jitter(height = 0.2, width = 0.2) + 
+  labs(y = "record_length") + 
+  theme_small + 
   theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/15.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 
 ggplot(refr_type, aes(country, temporal_scale)) + 
   geom_jitter(height = 0.2) + 
   theme_generic + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9))
+  theme(axis.text.x = element_text(angle = 60, hjust = 0.8, vjust = 0.9)) 
+
+ggsave("results/16.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ggplot(refr_type, aes(group, temporal_scale)) + 
   geom_jitter(height = 0.2, width = 0.2) + 
+  labs(x = "record_length") + 
   theme_generic + 
   theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/17.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
