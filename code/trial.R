@@ -1,4 +1,4 @@
-n2 <- 3                                               # Higher amount of hex colors
+n2 <- 4                                               # Higher amount of hex colors
 hex_codes2 <- hue_pal()(n2)                             # Identify hex codes
 show_col(hex_codes2)  
 hex_codes2
@@ -226,8 +226,7 @@ refr_type[, reclength_count := .N, by = record_length]
 
 
 refr_type$temporal_scale <- factor(refr_type$temporal_scale, 
-                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
-                                                "18h", 
+                                     levels = c("0.5h", "1h", "3h", "6h", "12h", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
 refr_type$ref_type <- factor(refr_type$ref_type, 
                                    levels = c("g", "s", "r", "m"))
@@ -442,10 +441,11 @@ ggplot(refr_type, aes(country, temporal_scale)) +
 ggsave("results/16.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
-ggplot(refr_type, aes(group, temporal_scale)) + 
+ggplot(refr_type, aes(group, temporal_scale, col = ref_type)) + 
   geom_jitter(height = 0.2, width = 0.2) + 
-  labs(x = "record_length") + 
-  theme_generic + 
+  labs(x = "Validation length", y = "Temporal scale", col = "Reference type") + 
+  theme_small + 
+  scale_color_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")) + 
   theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
 
 ggsave("results/17.png",
