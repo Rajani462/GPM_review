@@ -450,3 +450,30 @@ ggplot(refr_type, aes(group, temporal_scale, col = ref_type)) +
 
 ggsave("results/17.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
+
+#sample example----
+ggplot(refr_type, aes(temporal_scale, group, col = ref_type)) + 
+  geom_jitter(height = 0.2, width = 0.2) + 
+  labs(x = "Validation length", y = "Temporal scale", col = "Reference type") + 
+  theme_small + 
+  scale_color_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")) + 
+  theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
+
+df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>% 
+  group_by(x1, y1) %>%
+  do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
+  mutate(total = sum(value)) %>% 
+  group_by(x1, y1, total) 
+
+df
+
+newplot <- refr_type[, .(group, temporal_scale, ref_type)]
+
+group_newplot <- newplot[, total := .N, by = .(group, temporal_scale, ref_type)]
+
+
+
+#####
+ggplot(refr_type, aes(x="group", y=temporal_scale, fill=ref_type)) + 
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0)
