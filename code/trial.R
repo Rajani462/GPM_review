@@ -451,6 +451,11 @@ ggplot(refr_type, aes(group, temporal_scale, col = ref_type)) +
 ggsave("results/17.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
+
+
+
+
+
 #sample example----
 ggplot(refr_type, aes(temporal_scale, group, col = ref_type)) + 
   geom_jitter(height = 0.2, width = 0.2) + 
@@ -459,7 +464,39 @@ ggplot(refr_type, aes(temporal_scale, group, col = ref_type)) +
   scale_color_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")) + 
   theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
 
+ggsave("results/17.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
+
 df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>% 
+  group_by(x1, y1) %>%
+  do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
+  mutate(total = sum(value)) %>% 
+  group_by(x1, y1, total) 
+
+
+######################################
+subseting9 <- refr_type[, .(group, temporal_scale, ref_type)]
+
+subseting11 <- subseting9[, .(count = .N), by = .(group, temporal_scale, ref_type)]
+
+subseting13 <- subseting11[, total := sum(count), by = .(group, temporal_scale)]
+
+
+df.grobs1 <-  subseting13%>% 
+  do(subplots = ggplot(., aes(1, count, fill = ref_type)) + 
+       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
+       coord_polar(theta = "y") + 
+       theme_void()+ guides(fill = F)) %>% 
+  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots), 
+                                           x = x1-total/4, y = y1-total/4, 
+                                           xmax = x1+total/4, ymax = y1+total/4))) 
+
+
+
+
+
+
+df <- data_frame(x1 = rnorm(5), y1 = rnorm(5)) %>% 
   group_by(x1, y1) %>%
   do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
   mutate(total = sum(value)) %>% 
@@ -467,10 +504,26 @@ df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>%
 
 df
 
-newplot <- refr_type[, .(group, temporal_scale, ref_type)]
 
-group_newplot <- newplot[, total := .N, by = .(group, temporal_scale, ref_type)]
+df.grobs <- df %>% 
+  do(subplots = ggplot(., aes(2, value, fill = component)) + 
+       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
+       coord_polar(theta = "y") + 
+       theme_void()+ guides(fill = F)) %>% 
+  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots), 
+                                           x = x1-total/4, y = y1-total/4, 
+                                           xmax = x1+total/4, ymax = y1+total/4))) 
+df.grobs
 
+df.grobs %>%
+  {ggplot(data = ., aes(x1, y1)) +
+      scale_x_continuous(expand = c(0.25, 0)) +
+      scale_y_continuous(expand = c(0.25, 0)) +
+      .$subgrobs + 
+      geom_text(aes(label = round(total, 2))) + 
+      geom_col(data = df,
+               aes(0,0, fill = component), 
+               colour = "white")
 
 
 #####
