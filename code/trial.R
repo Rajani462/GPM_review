@@ -232,8 +232,8 @@ refr_type$ref_type <- factor(refr_type$ref_type,
                                    levels = c("g", "s", "r", "m"))
 
 saveRDS(refr_type, file = './data/refr_record_length.Rds')
-########################
-refr_type <- readRDS('./data/refr_record_length.Rds')#import data####
+#########################import data----
+refr_type <- readRDS('./data/refr_record_length.Rds')
 
 
 refr_type$group = cut(refr_type$record_length,c(0,12,24,36,48,60))
@@ -475,58 +475,59 @@ df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>%
 
 
 ######################################
-subseting9 <- refr_type[, .(group, temporal_scale, ref_type)]
-
-subseting11 <- subseting9[, .(count = .N), by = .(group, temporal_scale, ref_type)]
-
-subseting13 <- subseting11[, total := sum(count), by = .(group, temporal_scale)]
+subset_df4 <- refr_type[, .(group, temporal_scale, ref_type)]
 
 
-df.grobs1 <-  subseting13%>% 
+subset_df2$group <- as.numeric(subset_df2$group, levels = (1:5))#subset_df2$group, levels = (1:5)
+subset_df2$temporal_scale <- as.numeric(subset_df2$temporal_scale, levels = (10:18))
+
+colnames(subset_df2) <- c("x1", "group", "y1", "temporal_scale", "ref_type")
+
+
+
+subset_df5 <- subset_df4[, .(count = .N), by = .(group, temporal_scale, ref_type)]
+
+
+
+subset_df6 <- subset_df5[, x2 := unclass(group)]
+subset_df7 <- subset_df6[, y2 := unclass(temporal_scale)]
+
+
+#subseting13 <- subseting11[, total := sum(count), by = .(group, temporal_scale)]
+
+
+df8 <- as.data.frame(subset_df7) %>% 
+  group_by(group, temporal_scale) %>%
+  #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
+  mutate(total = sum(count)) %>% 
+  group_by(group, temporal_scale, total)
+
+df8
+df8$group <- unclass(df8$group)
+df8$temporal_scale <- unclass(df8$temporal_scale)
+
+
+df.grobs8 <-  df8%>% 
   do(subplots = ggplot(., aes(1, count, fill = ref_type)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
        theme_void()+ guides(fill = F)) %>% 
-  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots), 
-                                           x = x1-total/4, y = y1-total/4, 
-                                           xmax = x1+total/4, ymax = y1+total/4))) 
+  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
+                                           x = group-total/20, y = temporal_scale-total/20, 
+                                           xmax = group+total/20, ymax = temporal_scale+total/20))) 
 
 
 
-
-
-
-df <- data_frame(x1 = rnorm(5), y1 = rnorm(5)) %>% 
-  group_by(x1, y1) %>%
-  do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = sum(value)) %>% 
-  group_by(x1, y1, total) 
-
-df
-
-
-df.grobs <- df %>% 
-  do(subplots = ggplot(., aes(2, value, fill = component)) + 
-       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
-       coord_polar(theta = "y") + 
-       theme_void()+ guides(fill = F)) %>% 
-  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots), 
-                                           x = x1-total/4, y = y1-total/4, 
-                                           xmax = x1+total/4, ymax = y1+total/4))) 
-df.grobs
-
-df.grobs %>%
-  {ggplot(data = ., aes(x1, y1)) +
-      scale_x_continuous(expand = c(0.25, 0)) +
-      scale_y_continuous(expand = c(0.25, 0)) +
+final_plot <- df.grobs8 %>%
+  {ggplot(data = ., aes(group, temporal_scale)) +
+      #scale_x_continuous(expand = c(0.25, 0)) +
+      #scale_y_continuous(expand = c(0.25, 0)) +
       .$subgrobs + 
       geom_text(aes(label = round(total, 2))) + 
-      geom_col(data = df,
-               aes(0,0, fill = component), 
-               colour = "white")
+      geom_col(data = df8,
+               aes(0,0, fill = ref_type), 
+               colour = "white")}
 
-
-#####
-ggplot(refr_type, aes(x="group", y=temporal_scale, fill=ref_type)) + 
-  geom_bar(stat="identity", width=1, color="white") +
-  coord_polar("y", start=0)
+final_plot + 
+  scale_x_discrete(labels = c("0-12", "13-24", "25-36", "37-48", "49-60")) + 
+  scale_y_discrete(labels = c("0.5h", "1h", "3h", "6h", "12h", "daily",  "monthly",  "seasonal", "annual"))
