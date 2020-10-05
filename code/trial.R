@@ -474,27 +474,14 @@ df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>%
   group_by(x1, y1, total) 
 
 
-######################################
+######################################Pie_chart----
 subset_df4 <- refr_type[, .(group, temporal_scale, ref_type)]
-
-
-subset_df2$group <- as.numeric(subset_df2$group, levels = (1:5))#subset_df2$group, levels = (1:5)
-subset_df2$temporal_scale <- as.numeric(subset_df2$temporal_scale, levels = (10:18))
-
-colnames(subset_df2) <- c("x1", "group", "y1", "temporal_scale", "ref_type")
-
-
 
 subset_df5 <- subset_df4[, .(count = .N), by = .(group, temporal_scale, ref_type)]
 
 
-
 subset_df6 <- subset_df5[, x2 := unclass(group)]
 subset_df7 <- subset_df6[, y2 := unclass(temporal_scale)]
-
-
-#subseting13 <- subseting11[, total := sum(count), by = .(group, temporal_scale)]
-
 
 df8 <- as.data.frame(subset_df7) %>% 
   group_by(group, temporal_scale) %>%
@@ -503,6 +490,7 @@ df8 <- as.data.frame(subset_df7) %>%
   group_by(group, temporal_scale, total)
 
 df8
+
 df8$group <- unclass(df8$group)
 df8$temporal_scale <- unclass(df8$temporal_scale)
 
@@ -517,11 +505,15 @@ df.grobs8 <-  df8%>%
                                            xmax = group+total/18, ymax = temporal_scale+total/18))) 
 
 
-
 final_plot <- df.grobs8 %>%
   {ggplot(data = ., aes(factor(group), factor(temporal_scale))) +
-      scale_x_discrete("Validation lenghth", labels = c("1" = "0-12", "2" = "13-24" , "3" = "25-36",  "4" = "37-48", "5" = "49-60")) +
-      scale_y_discrete("Temporal scale", labels = c("1" = "0.5h",  "2" = "1h", "3" = "3h", "4" = "6h", "5" = "12h", "6" = "daily", "7" = "monthly", "8" = "seasonal", "9" = "annual")) +
+      scale_x_discrete("Validation lenghth", labels = c("1" = "0-12", "2" = "13-24" ,
+                                                        "3" = "25-36",  "4" = "37-48",
+                                                        "5" = "49-60")) +
+      scale_y_discrete("Temporal scale", labels = c("1" = "0.5h",  "2" = "1h", "3" = "3h",
+                                                    "4" = "6h", "5" = "12h", "6" = "daily",
+                                                    "7" = "monthly", "8" = "seasonal",
+                                                    "9" = "annual")) +
       .$subgrobs + 
       geom_text(aes(label = round(total, 2)), size = 3) + 
       geom_col(data = df8,
