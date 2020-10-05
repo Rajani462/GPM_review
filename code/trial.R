@@ -513,21 +513,22 @@ df.grobs8 <-  df8%>%
        coord_polar(theta = "y") + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = group-total/20, y = temporal_scale-total/20, 
-                                           xmax = group+total/20, ymax = temporal_scale+total/20))) 
+                                           x = group-total/18, y = temporal_scale-total/18, 
+                                           xmax = group+total/18, ymax = temporal_scale+total/18))) 
 
 
 
 final_plot <- df.grobs8 %>%
-  {ggplot(data = ., aes(group, temporal_scale)) +
-      #scale_x_continuous(expand = c(0.25, 0)) +
-      #scale_y_continuous(expand = c(0.25, 0)) +
+  {ggplot(data = ., aes(factor(group), factor(temporal_scale))) +
+      scale_x_discrete("Validation lenghth", labels = c("1" = "0-12", "2" = "13-24" , "3" = "25-36",  "4" = "37-48", "5" = "49-60")) +
+      scale_y_discrete("Temporal scale", labels = c("1" = "0.5h",  "2" = "1h", "3" = "3h", "4" = "6h", "5" = "12h", "6" = "daily", "7" = "monthly", "8" = "seasonal", "9" = "annual")) +
       .$subgrobs + 
-      geom_text(aes(label = round(total, 2))) + 
+      geom_text(aes(label = round(total, 2)), size = 3) + 
       geom_col(data = df8,
                aes(0,0, fill = ref_type), 
                colour = "white")}
 
-final_plot + 
-  scale_x_discrete(labels = c("0-12", "13-24", "25-36", "37-48", "49-60")) + 
-  scale_y_discrete(labels = c("0.5h", "1h", "3h", "6h", "12h", "daily",  "monthly",  "seasonal", "annual"))
+final_plot + theme_small
+
+ggsave("results/18.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
