@@ -9,6 +9,10 @@ mycol_continent5 <- c( "#69bdd2", "#739F3D", "#1979a9", "#e07b39",
 
 mycol_continent6 <- c( "#69bdd2", "#739F3D", "#1979a9", "#edb879", "#e07b39", 
                       "#80391e")
+scale_color_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"))
+
+Piecol <- c("#69bdd2", "#AF4425", "#662E1C", "#EBDCB2")
+
 
 ggplot(study_plot) + 
   geom_bar(aes(x = factor(year), fill = continent)) + 
@@ -499,10 +503,11 @@ df.grobs8 <-  df8%>%
   do(subplots = ggplot(., aes(1, count, fill = ref_type)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
+       scale_fill_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = group-total/18, y = temporal_scale-total/18, 
-                                           xmax = group+total/18, ymax = temporal_scale+total/18))) 
+                                           x = group-10/18, y = temporal_scale-10/18, 
+                                           xmax = group+10/18, ymax = temporal_scale+10/18))) #size of the pie charts
 
 
 final_plot <- df.grobs8 %>%
@@ -518,9 +523,10 @@ final_plot <- df.grobs8 %>%
       geom_text(aes(label = round(total, 2)), size = 3) + 
       geom_col(data = df8,
                aes(0,0, fill = ref_type), 
-               colour = "white")}
+               colour = "white") + scale_fill_manual("Reference type", labels = c("Gauge", "satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights)}
 
-final_plot + theme_small
+final_plot + theme_generic
 
-ggsave("results/18.png",
+
+ggsave("results/19.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
