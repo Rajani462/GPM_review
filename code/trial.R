@@ -511,7 +511,9 @@ df.grobs8 <-  df8%>%
 
 
 final_plot <- df.grobs8 %>%
-  {ggplot(data = ., aes(factor(group), factor(temporal_scale))) +
+  {ggplot(data = ., aes(factor(group), factor(temporal_scale))) + 
+      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
+                        # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
       scale_x_discrete("Validation lenghth", labels = c("1" = "0-12", "2" = "13-24" ,
                                                         "3" = "25-36",  "4" = "37-48",
                                                         "5" = "49-60")) +
@@ -526,6 +528,7 @@ final_plot <- df.grobs8 %>%
                colour = "white") + scale_fill_manual("Reference type", labels = c("Gauge", "satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights)}
 
 final_plot + theme_generic
+
 
 
 ggsave("results/19.png",
