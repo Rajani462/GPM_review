@@ -503,7 +503,7 @@ df.grobs8 <-  df8%>%
   do(subplots = ggplot(., aes(1, count, fill = ref_type)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
-       scale_fill_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights) + 
+       scale_fill_manual(labels = c("Gauge", "Satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
                                            x = group-10/18, y = temporal_scale-10/18, 

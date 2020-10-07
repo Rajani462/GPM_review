@@ -46,8 +46,7 @@ imerg_combi <- subset(imerg_combi, !is.na(downscale))
 
 #reorder the levels of temporal_scale of imerg_combi
 imerg_combi$temporal_scale <- factor(imerg_combi$temporal_scale, 
-                                     levels = c("0.5h", "1h", "3h", "6h", "12h",
-                                                "18h", "1d to 60d", 
+                                     levels = c("0.5h", "1h", "3h", "6h", "12h", 
                                                 "daily",  "monthly",  "seasonal", "annual"))
 
 imerg_combi$imerg_type <- factor(imerg_combi$imerg_type, 
@@ -366,14 +365,58 @@ ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-spatio_tempo <- imerg_combi[, .('count' = .N),
-                               by = .(temporal_scale, grid_scale)]
+###Pie_chart----
+subset_tempo <- imerg_combi[, .(temporal_scale, grid_scale, imerg_type)]
+imerg_combi$grid_scale <- factor(imerg_combi$grid_scale, 
+                                 levels = c("0.1", "0.25"))
+subset_tempo <- subset_tempo[, .(count = .N), by = .(temporal_scale, grid_scale, imerg_type)]
 
 
-ggplot(spatio_tempo, aes(grid_scale, temporal_scale, color = count)) + 
-  geom_point(aes(size = count)) + 
-  theme_generic
+subset_tempo[, x2 := unclass(temporal_scale)]
+subset_tempo[, y2 := unclass(grid_scale)]
 
+df_plot <- as.data.frame(subset_tempo) %>% 
+  group_by(temporal_scale, grid_scale) %>%
+  #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
+  mutate(total = sum(count)) %>% 
+  group_by(temporal_scale, grid_scale, total)
+
+df_plot
+
+df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
+df_plot$grid_scale <- unclass(df_plot$grid_scale)
+
+
+df.grobs <-  df_plot%>% 
+  do(subplots = ggplot(., aes(1, count, fill = imerg_type)) + 
+       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
+       coord_polar(theta = "y") + 
+       scale_fill_manual(labels = c("IMERG_E", "IMERG_L", "IMERG_F"), values=palettes_bright$colset_cheer_brights) + 
+       theme_void()+ guides(fill = F)) %>% 
+  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
+                                           x = temporal_scale-10/18, y = grid_scale-10/18, 
+                                           xmax = temporal_scale+10/18, ymax = grid_scale+10/18))) #size of the pie charts
+
+
+final_plot <- df.grobs %>%
+  {ggplot(data = ., aes(factor(temporal_scale), factor(grid_scale))) + 
+      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
+      # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
+      scale_x_discrete("Temporal scale", labels = c("1" = "0.5h", "2" = "1h", "3" = "3h",
+                                                    "4" = "6h", "5" = "12h", "6" = "daily",
+                                                    "7" = "monthly", "8" = "seasonal",
+                                                    "9" = "annual")) + 
+      scale_y_discrete("Spatial scale", labels = c("1" = "0.1", "2" = "0.25")) + 
+      .$subgrobs + 
+      geom_text(aes(label = round(total, 2)), size = 3) + 
+      geom_col(data = df_plot,
+               aes(0,0, fill = imerg_type), 
+               colour = "white") + scale_fill_manual("IMERG type", labels = c("IMERG_E", "IMERG_L", "IMERG_F"), values=palettes_bright$colset_cheer_brights)}
+
+final_plot + theme_generic
+
+ggsave("results/plots/Temporal_vs_Spatial_scales_pie.png", width = 7.2, 
+       height = 5.3, units = "in", dpi = 600)
 
 
 
