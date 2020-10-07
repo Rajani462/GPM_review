@@ -533,3 +533,59 @@ final_plot + theme_generic
 
 ggsave("results/19.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
+
+###########Pie_chart_spatio_temporal----
+subset_tempo <- imerg_combi[, .(continent, temporal_scale, grid_scale)]
+subset_tempo$grid_scale <- factor(subset_tempo$grid_scale, 
+                                  levels = c("0.1", "0.25"))
+subset_tempo$continent <- factor(subset_tempo$continent, 
+                                 levels = c("Africa", "Asia", "Europe", "North America",
+                                            "South America", "Global"))
+subset_tempo <- subset_tempo[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
+
+
+subset_tempo[, x2 := unclass(continent)]
+subset_tempo[, y2 := unclass(temporal_scale)]
+
+df_plot <- as.data.frame(subset_tempo) %>% 
+  group_by(continent, temporal_scale) %>%
+  #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
+  mutate(total = sum(count)) %>% 
+  group_by(continent, temporal_scale, total)
+
+df_plot
+
+df_plot$continent <- unclass(df_plot$continent)
+df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
+
+
+df.grobs <-  df_plot%>% 
+  do(subplots = ggplot(., aes(1, count, fill = grid_scale)) + 
+       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
+       coord_polar(theta = "y") + 
+       scale_fill_manual(labels = c("0.1", "0.25"), values=palettes_bright$colset_cheer_brights) + 
+       theme_void()+ guides(fill = F)) %>% 
+  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
+                                           x = continent-10/18, y = temporal_scale-10/18, 
+                                           xmax = continent+10/18, ymax = temporal_scale+10/18))) #size of the pie charts
+
+
+final_plot <- df.grobs %>%
+  {ggplot(data = ., aes(factor(continent), factor(temporal_scale))) + 
+      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
+      # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
+      scale_x_discrete("Continent", labels = c("1" = "Africa", "2" = "Asia", "3" = "Europe", 
+                                               "4" = "N_America", "5" = "S_America", "6" = "Global")) + 
+      scale_y_discrete("Temporal scale", labels = c("1" = "0.5h", "2" = "1h", "3" = "3h",
+                                                    "4" = "6h", "5" = "12h", "6" = "daily",
+                                                    "7" = "monthly", "8" = "seasonal",
+                                                    "9" = "annual")) + 
+      .$subgrobs + 
+      geom_text(aes(label = round(total, 2)), size = 3) + 
+      geom_col(data = df_plot,
+               aes(0,0, fill = grid_scale), 
+               colour = "white") + scale_fill_manual("Spatial scale", labels = c("0.1", "0.25"), values=palettes_bright$colset_cheer_brights)}
+
+final_plot + theme_small
+ggsave("results/20.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
