@@ -413,14 +413,9 @@ final_plot <- df.grobs %>%
                aes(0,0, fill = imerg_type), 
                colour = "white") + scale_fill_manual("IMERG type", labels = c("IMERG_E", "IMERG_L", "IMERG_F"), values=palettes_bright$colset_cheer_brights)}
 
-final_plot + theme_generic
+final_plot + theme_small
 
 ggsave("results/plots/Temporal_vs_Spatial_scales_pie.png", width = 7.2, 
-       height = 5.3, units = "in", dpi = 600)
-
-
-
-ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
 
