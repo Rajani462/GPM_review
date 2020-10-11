@@ -490,10 +490,13 @@ subset_df7 <- subset_df6[, y2 := unclass(temporal_scale)]
 df8 <- as.data.frame(subset_df7) %>% 
   group_by(group, temporal_scale) %>%
   #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = sum(count)) %>% 
+  mutate(total = (sum(count)/362)*100) %>% 
   group_by(group, temporal_scale, total)
 
 df8
+
+total_count <- sum(df8$count)
+
 
 df8$group <- unclass(df8$group)
 df8$temporal_scale <- unclass(df8$temporal_scale)
@@ -531,7 +534,7 @@ final_plot + theme_generic
 
 
 
-ggsave("results/19.png",
+ggsave("results/Validation_length_percent.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ###########Pie_chart_spatio_temporal----
@@ -544,16 +547,19 @@ subset_tempo$continent <- factor(subset_tempo$continent,
 subset_tempo <- subset_tempo[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
 
 
-subset_tempo[, x2 := unclass(continent)]
-subset_tempo[, y2 := unclass(temporal_scale)]
+#subset_tempo[, x2 := unclass(continent)]
+#subset_tempo[, y2 := unclass(temporal_scale)]
 
 df_plot <- as.data.frame(subset_tempo) %>% 
   group_by(continent, temporal_scale) %>%
   #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = sum(count)) %>% 
+  mutate(total = (sum(count)/293)*100) %>%  #total number of studies without grouping or sum(count) = 293
   group_by(continent, temporal_scale, total)
+ 
 
 df_plot
+#total_studies <- sum(df_plot$total)
+#df_plot <- mutate(df_plot, percent = (total/total_studies)*100)
 
 df_plot$continent <- unclass(df_plot$continent)
 df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
@@ -588,5 +594,5 @@ final_plot <- df.grobs %>%
 
 final_plot + theme_small + theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
   
-ggsave("results/20.png",
+ggsave("results/spatial_temporal_percent.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
