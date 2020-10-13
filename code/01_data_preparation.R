@@ -10,6 +10,8 @@ hydrological <- readRDS('./data/hydrological.Rds')
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
                           lat_mean, lon_mean, area, variable, surface)]
 
+continent_type <- studies[, .(id, continent)]
+
 study_country <- studies[, .(id, country)]
 study_country <- split_tidy(study_country)
 study_country <- subset(study_country, !is.na(country))
