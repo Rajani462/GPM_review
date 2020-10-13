@@ -1,4 +1,4 @@
-n2 <- 4                                               # Higher amount of hex colors
+n2 <- 8                                               # Higher amount of hex colors
 hex_codes2 <- hue_pal()(n2)                             # Identify hex codes
 show_col(hex_codes2)  
 hex_codes2
@@ -538,13 +538,24 @@ ggsave("results/Validation_length_percent.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ###########Pie_chart_spatio_temporal----
-subset_tempo <- imerg_combi[, .(continent, temporal_scale, grid_scale)]
-subset_tempo$grid_scale <- factor(subset_tempo$grid_scale, 
-                                  levels = c("0.1", "0.25"))
-subset_tempo$continent <- factor(subset_tempo$continent, 
+ref_spat_tempo <- refr_type[study_tempscale, on = 'id']
+ref_spat_tempo2 <- ref_spat_tempo[study_gridscale, on = 'id']
+ref_spat_tempo2<- ref_spat_tempo2[continent_type, on = 'id']
+
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na(temporal_scale))
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na( grid_scale))
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na(continent))
+#spat_tempo <- study_tempscale[study_gridscale, on = 'id']
+#spat_tempo_ref <- spat_tempo[refr_type, on = 'id']
+
+
+#subset_tempo <- imerg_combi[, .(continent, temporal_scale, grid_scale)]
+ref_spat_tempo2$grid_scale <- factor(ref_spat_tempo2$grid_scale, 
+                                  levels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"))
+ref_spat_tempo2$continent <- factor(ref_spat_tempo2$continent, 
                                  levels = c("Africa", "Asia", "Europe", "North America",
                                             "South America", "Global"))
-subset_tempo <- subset_tempo[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
+subset_tempo <- ref_spat_tempo2[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
 
 
 #subset_tempo[, x2 := unclass(continent)]
@@ -553,7 +564,7 @@ subset_tempo <- subset_tempo[, .(count = .N), by = .(continent, temporal_scale, 
 df_plot <- as.data.frame(subset_tempo) %>% 
   group_by(continent, temporal_scale) %>%
   #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = (sum(count)/293)*100) %>%  #total number of studies without grouping or sum(count) = 293
+  mutate(total = sum(count)) %>%
   group_by(continent, temporal_scale, total)
  
 
@@ -564,12 +575,14 @@ df_plot
 df_plot$continent <- unclass(df_plot$continent)
 df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
 
+colset_bright2 <- c("#6a3d9a", "#375E97", "#008DCB", "#31A9B8", 
+                   "#486B00", "#258039", "#A2C523", "#FFCE38")
 
 df.grobs <-  df_plot%>% 
   do(subplots = ggplot(., aes(1, count, fill = grid_scale)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
-       scale_fill_manual(labels = c("0.1", "0.25"), values=palettes_bright$colset_cheer_brights) + 
+       scale_fill_manual(labels = c("0.1", "0.2", "0.25", "0.5", "1", "2", "2.5", "3"), values=colset_bright2) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
                                            x = continent-10/18, y = temporal_scale-10/18, 
@@ -590,9 +603,9 @@ final_plot <- df.grobs %>%
       geom_text(aes(label = round(total, 2)), size = 3) + 
       geom_col(data = df_plot,
                aes(0,0, fill = grid_scale), 
-               colour = "white") + scale_fill_manual("Spatial scale", labels = c("0.1", "0.25"), values=palettes_bright$colset_cheer_brights)}
+               colour = "white") + scale_fill_manual("Spatial scale", labels = c("0.1", "0.2 - 0.25", "0.25", "0.5", "1", "2", "2.5", "3"), values=colset_bright2)}
 
-final_plot + theme_small + theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
+final_plot + theme_generic + theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
   
 ggsave("results/spatial_temporal_percent.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
