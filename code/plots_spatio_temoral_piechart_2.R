@@ -3,22 +3,28 @@ ref_spat_tempo2 <- ref_spat_tempo[study_gridscale, on = 'id']
 ref_spat_tempo5<- ref_spat_tempo2[continent_type, on = 'id']
 
 
+
+ref_spat_tempo5$grid_scale<- unclass(ref_spat_tempo5$grid_scale)
+
+ref_spat_tempo5$grid_scale[which(ref_spat_tempo5$grid_scale >= 3)]<-10 #change the grid scales from >0.25--3 into 10
+
+
 ref_spat_tempo5$continent <- factor(ref_spat_tempo5$continent, 
-                                    levels = c("Africa", "Asia", "Europe", "North America",
-                                               "South America", "Global"))
+                                    levels = c("Africa", "Asia", "Europe", "North America", "South America", "Global"))
 ref_spat_tempo5$temporal_scale <- factor(ref_spat_tempo5$temporal_scale, 
                                          levels = c("0.5h", "1h", "3h", "6h", "12h", 
                                                     "daily",  "monthly",  "seasonal", "annual"))
-ref_spat_tempo5$grid_scale <- factor(ref_spat_tempo5$grid_scale, 
-                                     levels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"))
+#ref_spat_tempo5$grid_scale <- as.factor(ref_spat_tempo5$grid_scale, 
+                                     #levels = c("0.1", "0.25", ">0.25"))
 
 
 ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(temporal_scale))
-ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na( grid_scale))
+ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(grid_scale))
 ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(continent))
 
 
 subset_tempo <- ref_spat_tempo5[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
+
 
 #subset_tempo[, x2 := unclass(continent)]
 #subset_tempo[, y2 := unclass(temporal_scale)]
@@ -29,18 +35,16 @@ df_plot <- as.data.frame(subset_tempo) %>%
   mutate(total = sum(count)) %>%
   group_by(continent, temporal_scale, total)
 
-
 which(is.na(df_plot))
 
-df_plot
 #total_studies <- sum(df_plot$total)
 #df_plot <- mutate(df_plot, percent = (total/total_studies)*100)
 
 df_plot$continent <- unclass(df_plot$continent)
 df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
+df_plot$grid_scale <- as.factor(df_plot$grid_scale)
 
-mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#1979a9", "#edb879", "#e07b39", 
-                       "#80391e", "#6a3d9a")
+mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#e07b39")
 
 #df_plot2 <- df_plot[df_plot$grid_scale>0.25,`:=`("grid_scale" = factor(123))]
 
@@ -48,12 +52,12 @@ df.grobs <-  df_plot%>%
   do(subplots = ggplot(., aes(1, count, fill = grid_scale)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
-       scale_fill_manual(labels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"), 
+       scale_fill_manual(labels = c("0.1", "0.25", ">0.25"), 
                          values=mycol_gridscale7) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = continent-10/17, y = temporal_scale-10/17, 
-                                           xmax = continent+10/17, ymax = temporal_scale+10/17))) #size of the pie charts
+                                           x = continent-12/20, y = temporal_scale-12/20, 
+                                           xmax = continent+12/20, ymax = temporal_scale+12/20))) #size of the pie charts
 
 
 
@@ -74,11 +78,12 @@ final_plot <- df.grobs %>%
       geom_col(data = df_plot,
                aes(0,0, fill = grid_scale), 
                colour = "white") + 
-      scale_fill_manual("Spatial scale", labels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"),
+      scale_fill_manual("Spatial scale", labels = c("0.1", "0.25", ">0.25"),
                         values=mycol_gridscale7)}
 
 final_plot + theme_small + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
+
 
 ggsave("results/spatio_temporal_continents.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
