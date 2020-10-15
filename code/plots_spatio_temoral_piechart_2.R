@@ -1,6 +1,6 @@
 ref_spat_tempo <- refr_type[study_tempscale, on = 'id']
 ref_spat_tempo2 <- ref_spat_tempo[study_gridscale, on = 'id']
-ref_spat_tempo2<- ref_spat_tempo2[continent_type, on = 'id']
+ref_spat_tempo5<- ref_spat_tempo2[continent_type, on = 'id']
 
 
 ref_spat_tempo5$continent <- factor(ref_spat_tempo5$continent, 
@@ -42,7 +42,7 @@ df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
 mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#1979a9", "#edb879", "#e07b39", 
                        "#80391e", "#6a3d9a")
 
-
+#df_plot2 <- df_plot[df_plot$grid_scale>0.25,`:=`("grid_scale" = factor(123))]
 
 df.grobs <-  df_plot%>% 
   do(subplots = ggplot(., aes(1, count, fill = grid_scale)) + 
@@ -52,8 +52,8 @@ df.grobs <-  df_plot%>%
                          values=mycol_gridscale7) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = continent-10/12, y = temporal_scale-10/12, 
-                                           xmax = continent+10/12, ymax = temporal_scale+10/12))) #size of the pie charts
+                                           x = continent-10/17, y = temporal_scale-10/17, 
+                                           xmax = continent+10/17, ymax = temporal_scale+10/17))) #size of the pie charts
 
 
 
@@ -63,7 +63,7 @@ final_plot <- df.grobs %>%
       # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
       #scale_x_discrete("Continent", labels = c("1" = "Africa", "2" = "Asia", "3" = "Europe", 
       scale_x_discrete("Continents", labels = c("1" = "Africa", "2" = "Asia", "3"  = "Europe", 
-                                                "4"= "North Americ", "5" = "South America",
+                                                "4"= "North America", "5" = "South America",
                                                 "6" = "Golbal")) + 
       scale_y_discrete("Temporal scale", labels = c("1" = "0.5h", "2" = "1h", "3" = "3h",
                                                     "4" = "6h", "5" = "12h", "6" = "daily",
@@ -74,8 +74,11 @@ final_plot <- df.grobs %>%
       geom_col(data = df_plot,
                aes(0,0, fill = grid_scale), 
                colour = "white") + 
-      scale_fill_manual("grid scale", labels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"),
+      scale_fill_manual("Spatial scale", labels = c("0.1", "0.25", "0.5", "1", "2", "2.5", "3"),
                         values=mycol_gridscale7)}
 
 final_plot + theme_small + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
+
+ggsave("results/spatio_temporal_continents.png",
+       width = 7.2, height = 5.3, units = "in", dpi = 600)
