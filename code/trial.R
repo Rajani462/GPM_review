@@ -705,3 +705,38 @@ final_plot + theme_small +
 
 ggsave("results/spatio_temporal_continents.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
+###########################################
+
+vol_indices$timeseries_eval <- factor(vol_indices$timeseries_eval, 
+                                      levels = c("COR", "RMSE", "Bias"))
+vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
+
+
+cat_indices$categ_eval <- factor(cat_indices$categ_eval, 
+                                 levels = c("POD", "FAR", "CSI"))
+cat_indices <- subset(cat_indices, !is.na(categ_eval))
+
+indices <- merge(cat_indices, vol_indices, by = "id", all = TRUE, allow.cartesian=TRUE)
+
+
+indices <- indices[study_tempscale, on = 'id', allow.cartesian=TRUE]
+
+indices$temporal_scale <- factor(indices$temporal_scale, 
+                                 levels = c("0.5h", "1h", "3h", "6h", "12h", 
+                                            "daily",  "monthly",  "seasonal", "annual"))
+
+
+ggplot(na.omit(indices), aes(categ_eval, temporal_scale)) + 
+  geom_jitter()+ 
+  labs(x = "Categorical Indices", y = "Temporal_scale") + 
+  theme_small
+
+ggplot(na.omit(indices), aes(timeseries_eval, temporal_scale)) + 
+  geom_jitter()+ 
+  labs(x = "Volumetric Indices", y = "Temporal_scale") + 
+  theme_small
+
+ggplot(na.omit(indices), aes(timeseries_eval, categ_eval)) + 
+  geom_jitter()+ 
+  labs(x = "Volumetric Indices", y = "Categorical Indices") + 
+  theme_small
