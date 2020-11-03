@@ -15,18 +15,18 @@ tt <- with(vol_indices, table(a,b))
 #######################
 
 library(devtools)
-install.packages("rlang")
+#install.packages("rlang")
 install.packages("UpSetR")
 library("UpSetR")
 install_github("jokergoo/ComplexHeatmap")           
 library("ComplexHeatmap")            
-            
+library(splitstackshape)        
 ########################
 vol_indices01 <- studies[, .(id, timeseries_eval)]
 cat_indices01 <- studies[, .(id, categ_eval)]
 
 
-vol_indices02 <- cSplit(vol_indices01, "timeseries_eval", ",")
+vol_indices02 <- cSplit(vol_indices01, "timeseries_eval", ",") #split into multiple columns
 cat_indices02 <- cSplit(cat_indices01, "categ_eval", ",")
 
 indices_03 <- vol_indices02[cat_indices02, on = 'id', allow.cartesian=TRUE]
@@ -51,7 +51,8 @@ indices_binary <- with(indices_split06, table(id,newcol))
 m = make_comb_mat(indices_binary)
 UpSet(m)
 
-UpSet(m, comb_order = order(comb_size(m)))
+#upset(m, order.by = "freq")
+#UpSet(m, comb_order = order(comb_size(m)))
 
 m <- m[, 20:1]
 ss = set_size(m)

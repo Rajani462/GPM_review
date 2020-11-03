@@ -6,9 +6,7 @@ ref_spat_tempo5<- ref_spat_tempo2[continent_type, on = 'id']
 #write_xlsx(ref_spat_tempo5,  "tempo_grid_conti.xlsx")
 
 
-
-
-trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
+#trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
 
 
 
@@ -34,9 +32,6 @@ ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(continent))
 subset_tempo <- ref_spat_tempo5[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
 
 
-#subset_tempo[, x2 := unclass(continent)]
-#subset_tempo[, y2 := unclass(temporal_scale)]
-
 df_plot <- as.data.frame(subset_tempo) %>% 
   group_by(continent, temporal_scale) %>%
   mutate(total = sum(count)) %>%
@@ -55,20 +50,24 @@ df_plot$grid_scale <- as.factor(df_plot$grid_scale)
 
 mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#e07b39")
 
-#df_plot2 <- df_plot[df_plot$grid_scale>0.25,`:=`("grid_scale" = factor(123))]
 
 df.grobs <-  df_plot%>% 
-  do(subplots = ggplot(., aes(1, count, fill = factor(grid_scale))) + 
+  do(subplots = ggplot(., aes(1, count, fill = as.factor(grid_scale))) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
-       #scale_fill_manual(labels = c("0.1", "0.25", ">0.25"), 
-                         #values=mycol_gridscale7) + 
+       scale_fill_manual(labels = c("0.1", "0.25", ">0.25"), 
+                         values=mycol_gridscale7) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
                                            x = continent-12/20, y = temporal_scale-12/20, 
                                            xmax = continent+12/20, ymax = temporal_scale+12/20))) #size of the pie charts
 
-#write_xlsx(df.grobs,  "df.grobs.xlsx")
+
+
+#dfplot2 <- dfplot2[, .N, by = list(continent, temporal_scale, grid_scale)]
+
+#write_xlsx(dfplot2,  "df.grobs3.xlsx")
+
 
 final_plot <- df.grobs %>%
   {ggplot(data = ., aes(factor(continent), factor(temporal_scale))) + 
@@ -86,9 +85,9 @@ final_plot <- df.grobs %>%
       geom_text(aes(label = round(total, 2)), size = 3) + 
       geom_col(data = df_plot,
                aes(0,0, fill = grid_scale), 
-               colour = "white")} 
-      #scale_fill_manual("Spatial scale", labels = c("0.1", "0.25", ">0.25"),
-                        #values=mycol_gridscale7)}
+               colour = "white") + 
+      scale_fill_manual("Spatial scale", labels = c("0.1", "0.25", ">0.25"),
+                        values=mycol_gridscale7)}
 
 final_plot + theme_small + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
