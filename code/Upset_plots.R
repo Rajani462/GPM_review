@@ -16,9 +16,9 @@ tt <- with(vol_indices, table(a,b))
 
 library(devtools)
 #install.packages("rlang")
-install.packages("UpSetR")
+#install.packages("UpSetR")
 library("UpSetR")
-install_github("jokergoo/ComplexHeatmap")           
+#install_github("jokergoo/ComplexHeatmap")           
 library("ComplexHeatmap")            
 library(splitstackshape)        
 ########################
@@ -41,7 +41,7 @@ indicescomb04 <- unite(indices_03, newcol, c(timeseries_eval_1, timeseries_eval_
 indices_split05 <- split_tidy2(indicescomb04)
 
 indices_split05$newcol <- factor(indices_split05$newcol, 
-                                 levels = c("COR", "RMSE", "Bias", "SD", "POD", "FAR", "CSI", "HSS"))
+                                 levels = c("COR", "RMSE", "RBias", "SD", "POD", "FAR", "CSI", "HSS"))
 
 indices_split06 <- subset(indices_split05, !is.na(newcol))
 
@@ -58,8 +58,8 @@ m <- m[, 20:1]
 ss = set_size(m)
 cs = comb_size(m)
 ht = UpSet(m, 
-           set_order = order(ss),
-           comb_order = order(comb_size(m), -cs),
+           set_order = order(-ss),
+           comb_order = order(-comb_size(m), -(cs)),
            top_annotation = HeatmapAnnotation(
              "Indices Intersections" = anno_barplot(cs, 
                                                   ylim = c(0, max(cs)*1.1),

@@ -220,13 +220,15 @@ ggplot(refr_type, aes(ref_type, record_length)) +
   geom_jitter(width = 0.2) + 
   theme_small
 ####################################
-refr_type[, ref_count := .N, by = ref_type]
+#refr_type[, ref_count := .N, by = ref_type]
 
 refr_type <- refr_type[study_tempscale, on = 'id']
 
-refr_type[, tempo_count := .N, by = temporal_scale]
+refr_type <- refr_type[recordlength, on = 'id']
 
-refr_type[, reclength_count := .N, by = record_length]
+#refr_type[, tempo_count := .N, by = temporal_scale]
+
+#refr_type[, reclength_count := .N, by = record_length]
 
 
 refr_type$temporal_scale <- factor(refr_type$temporal_scale, 
@@ -237,7 +239,7 @@ refr_type$ref_type <- factor(refr_type$ref_type,
 
 saveRDS(refr_type, file = './data/refr_record_length.Rds')
 #########################import data----
-refr_type <- readRDS('./data/refr_record_length.Rds')
+refr_type2 <- readRDS('./data/refr_record_length.Rds')
 
 
 refr_type$group = cut(refr_type$record_length,c(0,12,24,36,48,60))
@@ -449,7 +451,7 @@ ggplot(refr_type, aes(group, temporal_scale, col = ref_type)) +
   geom_jitter(height = 0.2, width = 0.2) + 
   labs(x = "Validation length", y = "Temporal scale", col = "Reference type") + 
   theme_small + 
-  scale_color_manual(labels = c("Gauge", "satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")) + 
+  scale_color_manual(labels = c("Gauge", "Satellite", "Radar", "Model"), values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")) + 
   theme(axis.text.y = element_text(angle = 30, hjust = 0.8, vjust = 0.9))
 
 ggsave("results/17.png",
@@ -477,65 +479,6 @@ df <- data_frame(x1 = c(5, 7, 9, 11), y1 = c(10, 14, 18, 22)) %>%
   mutate(total = sum(value)) %>% 
   group_by(x1, y1, total) 
 
-
-######################################Pie_chart----
-subset_df4 <- refr_type[, .(group, temporal_scale, ref_type)]
-
-subset_df5 <- subset_df4[, .(count = .N), by = .(group, temporal_scale, ref_type)]
-
-
-subset_df6 <- subset_df5[, x2 := unclass(group)]
-subset_df7 <- subset_df6[, y2 := unclass(temporal_scale)]
-
-df8 <- as.data.frame(subset_df7) %>% 
-  group_by(group, temporal_scale) %>%
-  #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = (sum(count)/362)*100) %>% 
-  group_by(group, temporal_scale, total)
-
-df8
-
-total_count <- sum(df8$count)
-
-
-df8$group <- unclass(df8$group)
-df8$temporal_scale <- unclass(df8$temporal_scale)
-
-
-df.grobs8 <-  df8%>% 
-  do(subplots = ggplot(., aes(1, count, fill = ref_type)) + 
-       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
-       coord_polar(theta = "y") + 
-       scale_fill_manual(labels = c("Gauge", "Satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights) + 
-       theme_void()+ guides(fill = F)) %>% 
-  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = group-10/18, y = temporal_scale-10/18, 
-                                           xmax = group+10/18, ymax = temporal_scale+10/18))) #size of the pie charts
-
-
-final_plot <- df.grobs8 %>%
-  {ggplot(data = ., aes(factor(group), factor(temporal_scale))) + 
-      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
-                        # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
-      scale_x_discrete("Validation lenghth", labels = c("1" = "0-12", "2" = "13-24" ,
-                                                        "3" = "25-36",  "4" = "37-48",
-                                                        "5" = "49-60")) +
-      scale_y_discrete("Temporal scale", labels = c("1" = "0.5h",  "2" = "1h", "3" = "3h",
-                                                    "4" = "6h", "5" = "12h", "6" = "daily",
-                                                    "7" = "monthly", "8" = "seasonal",
-                                                    "9" = "annual")) +
-      .$subgrobs + 
-      geom_text(aes(label = round(total, 2)), size = 3) + 
-      geom_col(data = df8,
-               aes(0,0, fill = ref_type), 
-               colour = "white") + scale_fill_manual("Reference type", labels = c("Gauge", "satellite", "Radar", "Model"), values=palettes_bright$colset_cheer_brights)}
-
-final_plot + theme_generic
-
-
-
-ggsave("results/Validation_length_percent.png",
-       width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 ###########Pie_chart_spatio_temporal----
 ref_spat_tempo <- refr_type[study_tempscale, on = 'id']

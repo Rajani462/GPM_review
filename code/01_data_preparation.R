@@ -66,7 +66,28 @@ reference_type <-  studies[, .(id, gauge_eval, radar_eval, model_eval,
 
 refre_type <-  studies[, .(id, ref_type)]
 
+vol_indices <- studies[, .(id, timeseries_eval)]
+vol_indices <- split_tidy(vol_indices)
+vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
 
+cat_indices <- studies[, .(id, categ_eval)]
+cat_indices <- split_tidy(cat_indices)
+cat_indices <- subset(cat_indices, !is.na(categ_eval))
+
+
+vol_indices$timeseries_eval <- factor(vol_indices$timeseries_eval, 
+                               levels = c("COR", "RMSE", "Bias"))
+vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
+
+
+cat_indices$categ_eval <- factor(cat_indices$categ_eval, 
+                                      levels = c("POD", "FAR", "CSI"))
+cat_indices <- subset(cat_indices, !is.na(categ_eval))
+
+#indices <- merge(cat_indices, vol_indices, by = "id", all = TRUE, allow.cartesian=TRUE)
+
+
+#indices <- cat_indices[vol_indices, on = 'id']
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 

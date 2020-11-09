@@ -2,12 +2,8 @@
 ref_spat_tempo2 <- study_tempscale[study_gridscale, on = 'id']
 ref_spat_tempo5<- ref_spat_tempo2[continent_type, on = 'id']
 
-#write_xlsx(study_tempscale,  "study_tempscale.xlsx")
-#write_xlsx(ref_spat_tempo5,  "tempo_grid_conti.xlsx")
 
-
-#trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
-
+trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
 
 
 ref_spat_tempo5$grid_scale<- unclass(ref_spat_tempo5$grid_scale)
@@ -21,7 +17,7 @@ ref_spat_tempo5$temporal_scale <- factor(ref_spat_tempo5$temporal_scale,
                                          levels = c("0.5h", "1h", "3h", "6h", "12h", 
                                                     "daily",  "monthly",  "seasonal", "annual"))
 ref_spat_tempo5$grid_scale <- as.factor(ref_spat_tempo5$grid_scale)
-                                     #levels = c("0.1", "0.25", ">0.25"))
+                                     levels = c("0.1", "0.25", ">0.25"))
 
 
 ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(temporal_scale))

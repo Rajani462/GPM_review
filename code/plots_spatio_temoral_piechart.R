@@ -1,12 +1,42 @@
+refr_type
+
+
+
 ref_spat_tempo <- refr_type[study_tempscale, on = 'id']
 ref_spat_tempo2 <- ref_spat_tempo[study_gridscale, on = 'id']
 ref_spat_tempo2<- ref_spat_tempo2[continent_type, on = 'id']
+
+library(writexl)
+library(readxl)
+write_xlsx(refr_type,  "Reference_type.xlsx")
+write_xlsx(study_tempscale,  "Temporal_scale.xlsx")
+write_xlsx(study_gridscale,  "Grid_scale.xlsx")
+write_xlsx(ref_spat_tempo,  "Ref_tempo.xlsx")
+write_xlsx(ref_spat_tempo2,  "Ref_tempo_grid.xlsx")
+
+
+
+spat_temp <- study_tempscale[study_gridscale, on = 'id']
+write_xlsx(spat_temp,  "Spat_temp.xlsx")
+
+
+X = data.table(x = c(1,1,1,2,2,5,6), y = 1:7, key = "x")
+Y = data.table(x = c(2,6), z = letters[2:1], key = "x")
+
+
 
 ref_spat_tempo3 <- subset(ref_spat_tempo2, !is.na(temporal_scale))
 ref_spat_tempo4 <- subset(ref_spat_tempo3, !is.na( grid_scale))
 ref_spat_tempo5 <- subset(ref_spat_tempo4, !is.na(continent))
 #spat_tempo <- study_tempscale[study_gridscale, on = 'id']
 #spat_tempo_ref <- spat_tempo[refr_type, on = 'id']
+
+
+
+dx <- data.table(a = c(1,1,1,1,2,2), b = 3:8)
+dy <- data.table(a = c(1,1,2), c = 7:9)
+
+dz <- dx[dy, on = 'a', by=.EACHI]
 
 
 #subset_tempo <- imerg_combi[, .(continent, temporal_scale, grid_scale)]
@@ -52,6 +82,7 @@ df.grobs <-  df_plot%>%
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
                                            x = grid_scale-10/18, y = temporal_scale-10/18, 
                                            xmax = grid_scale+10/18, ymax = temporal_scale+10/18))) #size of the pie charts
+
 df.grobs  <- subset(df.grobs , !is.na(temporal_scale))
 df.grobs  <- subset(df.grobs, !is.na( grid_scale))
 df.grobs  <- subset(df.grobs, !is.na(continent))
