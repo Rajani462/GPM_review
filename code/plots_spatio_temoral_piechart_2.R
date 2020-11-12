@@ -1,31 +1,35 @@
-#ref_spat_tempo <- refr_type[study_tempscale, on = 'id']
-ref_spat_tempo2 <- study_tempscale[study_gridscale, on = 'id']
-ref_spat_tempo5<- ref_spat_tempo2[continent_type, on = 'id']
+#detailed description of the code is in https://stackoverflow.com/questions/43984614/rggplot2geom-points-how-to-swap-points-with-pie-charts
+
+ref_spat_tempo <- study_tempscale[study_gridscale, on = 'id']
+ref_spat_tempo2<- ref_spat_tempo[continent_type, on = 'id']
+
+#saveRDS(ref_spat_tempo5, file = './data/ref_spat_tempo5.Rds')
+
+#trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
 
 
-trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
+ref_spat_tempo2$grid_scale<- unclass(ref_spat_tempo2$grid_scale)
+
+ref_spat_tempo2$grid_scale[which(ref_spat_tempo2$grid_scale >= 3)]<-10 #change the grid scales from >0.25--3 into 10
 
 
-ref_spat_tempo5$grid_scale<- unclass(ref_spat_tempo5$grid_scale)
-
-ref_spat_tempo5$grid_scale[which(ref_spat_tempo5$grid_scale >= 3)]<-10 #change the grid scales from >0.25--3 into 10
-
-
-ref_spat_tempo5$continent <- factor(ref_spat_tempo5$continent, 
+ref_spat_tempo2$continent <- factor(ref_spat_tempo2$continent, 
                                     levels = c("Africa", "Asia", "Europe", "North America", "South America", "Global"))
-ref_spat_tempo5$temporal_scale <- factor(ref_spat_tempo5$temporal_scale, 
+
+ref_spat_tempo2$temporal_scale <- factor(ref_spat_tempo2$temporal_scale, 
                                          levels = c("0.5h", "1h", "3h", "6h", "12h", 
                                                     "daily",  "monthly",  "seasonal", "annual"))
-ref_spat_tempo5$grid_scale <- as.factor(ref_spat_tempo5$grid_scale)
-                                     levels = c("0.1", "0.25", ">0.25"))
+
+#ref_spat_tempo5$grid_scale <- as.factor(ref_spat_tempo5$grid_scale, 
+                                     #levels = c("0.1", "0.25", ">0.25"))
 
 
-ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(temporal_scale))
-ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(grid_scale))
-ref_spat_tempo5 <- subset(ref_spat_tempo5, !is.na(continent))
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na(temporal_scale))
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na(grid_scale))
+ref_spat_tempo2 <- subset(ref_spat_tempo2, !is.na(continent))
 
 
-subset_tempo <- ref_spat_tempo5[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
+subset_tempo <- ref_spat_tempo2[, .(count = .N), by = .(continent, temporal_scale, grid_scale)]
 
 
 df_plot <- as.data.frame(subset_tempo) %>% 
@@ -46,13 +50,14 @@ df_plot$grid_scale <- as.factor(df_plot$grid_scale)
 
 mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#e07b39")
 
+df_plot$grid_scale <- factor(df_plot$grid_scale, levels = c("1", "2", "10"), ordered = TRUE)
 
 df.grobs <-  df_plot%>% 
-  do(subplots = ggplot(., aes(1, count, fill = as.factor(grid_scale))) + 
+  do(subplots = ggplot(., aes(x = "", y = count, fill = grid_scale)) + 
        geom_col(position = "fill", alpha = 0.75, colour = "white") + 
        coord_polar(theta = "y") + 
        scale_fill_manual(labels = c("0.1", "0.25", ">0.25"), 
-                         values=mycol_gridscale7) + 
+                         values=setNames(mycol_gridscale7, c(1, 2, 10))) + 
        theme_void()+ guides(fill = F)) %>% 
   mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
                                            x = continent-12/20, y = temporal_scale-12/20, 

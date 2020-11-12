@@ -24,7 +24,8 @@ alg_vers <- studies[, .(id, imerg_vers)]
 alg_vers<- split_tidy(alg_vers)
 alg_vers <- subset(alg_vers, !is.na(imerg_vers))
 
-gpm_record <- studies[, .(id, record_start, record_end, record_length)]
+recordlength <- studies[, .(id, record_length)]
+
 
 study_tempscale <- studies[, .(id, temporal_scale)]
 study_tempscale <- split_tidy(study_tempscale)
@@ -57,7 +58,7 @@ refr_type <- studies[, .(id, ref_type)]
 refr_type <- split_tidy(refr_type)
 refr_type <- subset(refr_type, !is.na(ref_type))
 
-refr_type <- study_plot[refr_type, on = 'id']
+#refr_type <- study_plot[refr_type, on = 'id']
 
 
 
@@ -72,16 +73,6 @@ vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
 
 cat_indices <- studies[, .(id, categ_eval)]
 cat_indices <- split_tidy(cat_indices)
-cat_indices <- subset(cat_indices, !is.na(categ_eval))
-
-
-vol_indices$timeseries_eval <- factor(vol_indices$timeseries_eval, 
-                               levels = c("COR", "RMSE", "Bias"))
-vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
-
-
-cat_indices$categ_eval <- factor(cat_indices$categ_eval, 
-                                      levels = c("POD", "FAR", "CSI"))
 cat_indices <- subset(cat_indices, !is.na(categ_eval))
 
 #indices <- merge(cat_indices, vol_indices, by = "id", all = TRUE, allow.cartesian=TRUE)
