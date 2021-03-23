@@ -1,27 +1,12 @@
-#example
-data <- data.frame(a=c('sally','george','andy','sue','sue','sally','george'), 
-                   b=c('green','yellow','green','yellow','purple','brown','purple'))
 
-## Get a contingency table of counts
-X <- with(data, table(a,b))
+source('./source/libraries.R')
+source('./source/functions.R')
 
-## Massage it into the format you're wanting 
-cbind(name = rownames(X), apply(X, 2, as.character))
+studies <- readRDS('./data/studies.Rds')
 
-vol_indices <- subset(vol_indices, !is.na(timeseries_eval))
 
-tt <- with(vol_indices, table(a,b))
+# data preaparation for plot ----------------------------------------------
 
-#######################
-
-library(devtools)
-#install.packages("rlang")
-#install.packages("UpSetR")
-library("UpSetR")
-#install_github("jokergoo/ComplexHeatmap")           
-library("ComplexHeatmap")            
-library(splitstackshape)        
-########################
 vol_indices01 <- studies[, .(id, timeseries_eval)]
 cat_indices01 <- studies[, .(id, categ_eval)]
 
@@ -45,16 +30,31 @@ indices_split05$newcol <- factor(indices_split05$newcol,
 
 indices_split06 <- subset(indices_split05, !is.na(newcol))
 
+indices_split06$newcol <- recode(indices_split06$newcol, 
+                                 # CSI = "Others",
+                                 # RBias = "Others", 
+                                 SD = "Others", 
+                                 HSS = "Others")
 
+indices_split06$newcol <- factor(indices_split06$newcol, 
+                                 levels = c("COR", "RMSE", "RBias", "POD", "FAR", "CSI"))
+
+indices_07 <- indices_split06[!duplicated(indices_split06[ , c("id","newcol")]),]
+
+indices_binary <- with(indices_07, table(id,newcol))
 indices_binary <- with(indices_split06, table(id,newcol))
-##############Plot----
+
+
+# Plot --------------------------------------------------------------------
+
+
 m = make_comb_mat(indices_binary)
 UpSet(m)
 
 #upset(m, order.by = "freq")
 #UpSet(m, comb_order = order(comb_size(m)))
 
-m <- m[, 20:1]
+m <- m[, 8:1]
 ss = set_size(m)
 cs = comb_size(m)
 ht = UpSet(m, 
@@ -94,3 +94,4 @@ decorate_annotation("Indices Intersections", {
             default.units = "native", just = c("left", "bottom"), 
             gp = gpar(fontsize = 7, col = "#404040"), rot = 45)
 })
+

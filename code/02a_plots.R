@@ -2,7 +2,24 @@ source('./source/libs.R')
 source('./source/themes.R')
 source('./source/palettes.R')
 ##############################
-#data preparation for plots----
+
+
+# reading data-sets --------------------------------------------------------
+studies <- readRDS('./data/studies.rds')
+study_country <- readRDS('./data/study_country.rds')
+alg_vers <- readRDS('./data/alg_vers.rds')
+run_type <-  readRDS('./data/run_type.rds')
+study_tempscale <- readRDS('./data/study_tempscale.rds')
+study_gridscale <- readRDS('./data/study_gridscale.rds')
+study_compscale <- readRDS('./data/study_compscale.rds')
+study_compmthod <- readRDS('./data/study_compmthod.rds')
+refr_type <- readRDS('./data/refr_type.rds')
+vol_indices <- readRDS('./data/vol_indices.rds')
+cat_indices <- readRDS('./data/cat_indices.rds')
+
+
+# data preparation for plots ----------------------------------------------
+
 
 study_plot <- studies[, .(id, study_area, study_area_type,
                           country, continent, 
@@ -28,15 +45,8 @@ imerg_combi$continent <- factor(imerg_combi$continent,
                                 levels = c("Africa", "Asia", "Europe", "North America",
                                            "South America", "Global"))
 
-#write.xlsx(imerg_combi, 'imerg_combi2.xlsx')
 
-#trial2 <- study_plot[, .(alg_vers, run_type, study_gridscale, study_tempscale, 
-                         #study_compmthod, study_compscale, ref_type), on = 'id']
-
-#write.xlsx(trial2, 'trial2.xlsx')
-###before plotting remove NA's from imerg_combi
-
-trial3 <- subset(imerg_combi, !is.na .(imerg_type, imerg_vers))
+#before plotting remove NA's from imerg_combi
 
 imerg_combi <- subset(imerg_combi, !is.na(imerg_type))
 imerg_combi <- subset(imerg_combi, !is.na(imerg_vers))
@@ -55,7 +65,10 @@ imerg_combi$imerg_type <- factor(imerg_combi$imerg_type,
 
 
 
-###########Spatial distribution of studies----
+# plots -------------------------------------------------------------------
+
+
+#### Spatial distribution of studies
 
 study_plot2 <- subset(study_plot,continent!="Global")
 
@@ -97,7 +110,7 @@ imerg_verscount <- alg_vers[, .('vers_count' = .N),
 
 ###country wise papers reordered
 
-country_plot <- ggplot(plot_country) + 
+country_barplot <- ggplot(plot_country) + 
   geom_bar(aes(x = reorder(country, -prop),
                y = prop,
                #color = continent, 
@@ -115,10 +128,10 @@ country_plot <- ggplot(plot_country) +
 
 global_dist <- ggplotGrob(global_dist)
 
-Country_barplot + annotation_custom(grob = global_dist, xmin = 3, xmax = Inf, 
+country_barplot + annotation_custom(grob = global_dist, xmin = 3, xmax = Inf, 
                                     ymin = 5, ymax = Inf)
 
-ggsave("results/plots/Global_dist.png",
+ggsave("results/plots_paper/Global_dist.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
 
@@ -127,12 +140,7 @@ ggsave("results/plots/Global_dist.png",
 plot_continents <- study_plot[, .('paper_count' = .N),
                               by = continent][, prop := round(paper_count / sum(paper_count), 2)]
 
-###Line_plot
-plot_continents2 <- study_plot[, .('paper_count' = .N),
-                              by = .(continent, year)]
 
-ggplot(plot_continents2, aes(x = year, y = paper_count, group = continent)) + 
-  geom_line(aes(color = continent))
 ################  
 
 ggplot(plot_continents, aes(x = reorder(continent, prop),
@@ -163,7 +171,7 @@ ggplot(study_plot) +
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
-ggsave("results/plots/papers_per_year_continents.png", width = 7.2,
+ggsave("results/plots_paper/papers_per_year_continents.png", width = 7.2,
        height = 4.3, units = "in", dpi = 600)
 
 
@@ -181,15 +189,11 @@ ggplot(study_plot) +
 ggsave("results/plots/papers_per_year_continents2.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
 
-#line plot
-Papers_year <- study_plot[, .('paper_count' = .N),
-                                by = .(continent, year)]
 
-ggplot(Papers_year, aes(x = year, y = paper_count, group = continent)) + 
-  geom_line(aes(col = continent)) + 
-  labs(x = "Year", y = "Number of studies") + 
-  theme_very_small
-  
+
+# validation_length -------------------------------------------------------
+
+
 #data_continent wise
 continent_period <- study_plot[, .(id, continent, record_length, year)]
 
@@ -207,12 +211,6 @@ plot_asia <- asia[, .('count' = .N),
                    by = .(record_length, continent)][, percent := round(count / sum(count) * 100, 2)]
 
 #bar plots continent wise
-trial <- study_plot[, .( 'count' = .N),
-              by = .(record_length, continent)]
-
-ggplot(trial, aes(record_length, count)) + 
-  geom_point()
-
 #divide the record_lengths into ranges (10 months each)
 record_length_asia <-as.data.table(table(cut(asia$record_length, breaks = seq(0, 60, by = 12))))
 record_length_asia[, continent_name := factor('Asia')]
@@ -258,8 +256,9 @@ ggplot(AFESNG) +
 ggsave("results/plots/validation_lengths_continent.png", width = 7.2,
        height = 5.3, units = "in", dpi = 600)
   
-##########################################
-######Temporal_scale_vs_papers_bar_plot----
+###################################################
+
+##### Temporal_scale_vs_papers_bar_plot
 
 ggplot(imerg_combi, aes(temporal_scale, fill = imerg_type)) + 
   geom_bar(aes(y = (..count..)/sum(..count..)), position=position_dodge()) + 
@@ -365,84 +364,8 @@ ggplot(imerg_combi, aes(grid_scale, temporal_scale, color = imerg_type)) +
 ggsave("results/plots/Temporal_vs_Spatial_scales.png", width = 7.2, 
        height = 5.3, units = "in", dpi = 600)
 
-###Pie_chart----
-subset_tempo <- imerg_combi[, .(temporal_scale, grid_scale, imerg_type)]
-imerg_combi$grid_scale <- factor(imerg_combi$grid_scale, 
-                                 levels = c("0.1", "0.25"))
-subset_tempo <- subset_tempo[, .(count = .N), by = .(temporal_scale, grid_scale, imerg_type)]
 
-
-subset_tempo[, x2 := unclass(temporal_scale)]
-subset_tempo[, y2 := unclass(grid_scale)]
-
-df_plot <- as.data.frame(subset_tempo) %>% 
-  group_by(temporal_scale, grid_scale) %>%
-  #do(data_frame(component = LETTERS[1:3], value = runif(3))) %>% 
-  mutate(total = sum(count)) %>% 
-  group_by(temporal_scale, grid_scale, total)
-
-df_plot
-
-df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
-df_plot$grid_scale <- unclass(df_plot$grid_scale)
-
-
-df.grobs <-  df_plot%>% 
-  do(subplots = ggplot(., aes(1, count, fill = imerg_type)) + 
-       geom_col(position = "fill", alpha = 0.75, colour = "white") + 
-       coord_polar(theta = "y") + 
-       scale_fill_manual(labels = c("IMERG_E", "IMERG_L", "IMERG_F"), values=palettes_bright$colset_cheer_brights) + 
-       theme_void()+ guides(fill = F)) %>% 
-  mutate(subgrobs = list(annotation_custom(ggplotGrob(subplots),
-                                           x = temporal_scale-10/18, y = grid_scale-10/18, 
-                                           xmax = temporal_scale+10/18, ymax = grid_scale+10/18))) #size of the pie charts
-
-
-final_plot <- df.grobs %>%
-  {ggplot(data = ., aes(factor(temporal_scale), factor(grid_scale))) + 
-      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
-      # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
-      scale_x_discrete("Temporal scale", labels = c("1" = "0.5h", "2" = "1h", "3" = "3h",
-                                                    "4" = "6h", "5" = "12h", "6" = "daily",
-                                                    "7" = "monthly", "8" = "seasonal",
-                                                    "9" = "annual")) + 
-      scale_y_discrete("Spatial scale", labels = c("1" = "0.1", "2" = "0.25")) + 
-      .$subgrobs + 
-      geom_text(aes(label = round(total, 2)), size = 3) + 
-      geom_col(data = df_plot,
-               aes(0,0, fill = imerg_type), 
-               colour = "white") + scale_fill_manual("IMERG type", labels = c("IMERG_E", "IMERG_L", "IMERG_F"), values=palettes_bright$colset_cheer_brights)}
-
-final_plot + theme_small
-
-ggsave("results/plots/Temporal_vs_Spatial_scales_pie.png", width = 7.2, 
-       height = 5.3, units = "in", dpi = 600)
-
-
-###comparison_method----
-ggplot(imerg_combi, aes(ref_type, comparison_method)) + 
-  geom_jitter()
-
-
-  labs(x = "Spatial scale", y = "Temporal scale") + 
-  scale_fill_manual(values = c("#F0810F", "#739F3D", "#ACBD78")) + 
-  #scale_color_manual(values = colset_bright)
-
-
-ggplot(imerg_combi, aes(comparison_method)) + 
-  geom_bar()+ 
-  facet_wrap(~year) + 
-  labs(x = "comparison_method") + 
-  scale_fill_manual(values = c("#4D648D", "#337BAE",
-                               "#97B8C2",  "#739F3D",
-                               "#ACBD78",  
-                               "#F4CC70", "#EBB582")) + 
-  theme_small + 
-  facet_grid(~continent, scales="free", space="free_x") + 
-  theme(axis.text.x = element_text(angle = 50, hjust = 1, vjust = 0.9))
-
-
-ggsave("results/plots/Temporal_vs_Spatial_scales.png", )
+# Comparison_method ---------------------------------------------------------------
 
 ###comparison_scale----
 ggplot(imerg_combi, aes(continent)) + 

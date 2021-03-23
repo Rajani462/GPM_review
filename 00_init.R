@@ -1,0 +1,8 @@
+dir.create('./data')
+dir.create('./data/raw')
+dir.create('./results')
+dir.create('./source')
+dir.create('./results/plots')
+dir.create('./results/plots_paper')
+dir.create('./docs')
+dir.create('./archive')

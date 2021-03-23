@@ -1,10 +1,16 @@
-# Data pre-processing.
 
-source('./source/libraries.R')
+source('./source/libs.R')
 source('./source/functions.R')
+
+# read the datasets -------------------------------------------------------
 
 studies <- readRDS('./data/studies.Rds')
 hydrological <- readRDS('./data/hydrological.Rds')
+
+
+# Pre-processing ----------------------------------------------------------
+
+
 #Dividing the data-base into multiple small data-table
 
 study_area <- studies[, .(id, study_area, study_area_type, country, continent, 
@@ -60,8 +66,6 @@ refr_type <- subset(refr_type, !is.na(ref_type))
 
 #refr_type <- study_plot[refr_type, on = 'id']
 
-
-
 reference_type <-  studies[, .(id, gauge_eval, radar_eval, model_eval,
                                satellite_eval)]
 
@@ -75,12 +79,25 @@ cat_indices <- studies[, .(id, categ_eval)]
 cat_indices <- split_tidy(cat_indices)
 cat_indices <- subset(cat_indices, !is.na(categ_eval))
 
-#indices <- merge(cat_indices, vol_indices, by = "id", all = TRUE, allow.cartesian=TRUE)
-
 
 #indices <- cat_indices[vol_indices, on = 'id']
 
 study_perfm <- studies[, .(id, best_perform, worst_perform, limitations, reference, year, journal)]
 
-############Hydrological
+#### Hydrological
 hydro_metrics <- hydrological[, .(Ref, Location, Basin, Data_type, Model, NSE, Bias)]
+
+
+# Saving ------------------------------------------------------------------
+saveRDS(study_country, './data/study_country.rds')
+saveRDS(continent_type, './data/continent_type.rds')
+saveRDS(alg_vers, './data/alg_vers.rds')
+saveRDS(run_type, './data/run_type.rds')
+saveRDS(study_tempscale, './data/study_tempscale.rds')
+saveRDS(study_gridscale, './data/study_gridscale.rds')
+saveRDS(study_compscale, './data/study_compscale.rds')
+saveRDS(study_compmthod, './data/study_compmthod.rds')
+saveRDS(refr_type, './data/refr_type.rds')
+saveRDS(vol_indices, './data/vol_indices.rds')
+saveRDS(cat_indices, './data/cat_indices.rds')
+saveRDS(hydro_metrics, './data/hydro_metrics.rds')

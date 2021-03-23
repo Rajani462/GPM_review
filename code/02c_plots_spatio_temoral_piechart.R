@@ -1,11 +1,24 @@
 #detailed description of the code is in https://stackoverflow.com/questions/43984614/rggplot2geom-points-how-to-swap-points-with-pie-charts
 
+source('./source/libs.R')
+source('./source/themes.R')
+source('./source/palettes.R')
+##############################
+
+
+# reading data-sets and define colours  --------------------------------------------------------
+study_tempscale <- readRDS('./data/study_tempscale.rds')
+study_gridscale <- readRDS('./data/study_gridscale.rds')
+continent_type <- readRDS('./data/continent_type.rds')
+
+mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#e07b39")
+
+
+# pre-process before ploting ----------------------------------------------
+
+
 ref_spat_tempo <- study_tempscale[study_gridscale, on = 'id']
 ref_spat_tempo2<- ref_spat_tempo[continent_type, on = 'id']
-
-#saveRDS(ref_spat_tempo5, file = './data/ref_spat_tempo5.Rds')
-
-#trii <- ref_spat_tempo5[, .N, by = list(temporal_scale, grid_scale, continent)]
 
 
 ref_spat_tempo2$grid_scale<- unclass(ref_spat_tempo2$grid_scale)
@@ -46,9 +59,6 @@ df_plot$continent <- unclass(df_plot$continent)
 df_plot$temporal_scale <- unclass(df_plot$temporal_scale)
 df_plot$grid_scale <- as.factor(df_plot$grid_scale)
 
-#write_xlsx(df_plot,  "df_plot3.xlsx")
-
-mycol_gridscale7 <- c( "#69bdd2", "#739F3D", "#e07b39")
 
 df_plot$grid_scale <- factor(df_plot$grid_scale, levels = c("1", "2", "10"), ordered = TRUE)
 
@@ -65,16 +75,8 @@ df.grobs <-  df_plot%>%
 
 
 
-#dfplot2 <- dfplot2[, .N, by = list(continent, temporal_scale, grid_scale)]
-
-#write_xlsx(dfplot2,  "df.grobs3.xlsx")
-
-
 final_plot <- df.grobs %>%
   {ggplot(data = ., aes(factor(continent), factor(temporal_scale))) + 
-      #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
-      # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
-      #scale_x_discrete("Continent", labels = c("1" = "Africa", "2" = "Asia", "3" = "Europe", 
       scale_x_discrete("Continents", labels = c("1" = "Africa", "2" = "Asia", "3"  = "Europe", 
                                                 "4"= "North America", "5" = "South America",
                                                 "6" = "Golbal")) + 
@@ -94,6 +96,6 @@ final_plot + theme_small +
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
 
-ggsave("results/spatio_temporal_continents2.png",
+ggsave("results/plots_paper/spatio_temporal_continents2.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
