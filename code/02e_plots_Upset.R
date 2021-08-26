@@ -91,8 +91,8 @@ ht = UpSet(m, pt_size = unit(5, "mm"), #dot size
 ht = draw(ht)
 od = column_order(ht)
 decorate_annotation("Indices Intersections", {
-  grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
-            default.units = "native", just = c("left", "bottom"), 
-            gp = gpar(fontsize = 8, col = "#000000"), rot = 45)
+  #grid.text(cs[od], y = unit(cs[od], "native") + unit(2, "pt"), 
+  #default.units = "native", just = c("left", "bottom") 
+            #gp = gpar(fontsize = 8, col = "#000000"), rot = 45)
 })
 
