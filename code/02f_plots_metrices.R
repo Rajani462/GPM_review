@@ -106,14 +106,15 @@ ggsave("results/COR_global.png",
 
 #### overlay the plots in single panel
 g2 <- ggplotGrob(plot_POD)
-g3 <- ggplotGrob(plot_COR)
+g3 <- ggplotGrob(plot_FAR)
+g4 <- ggplotGrob(plot_COR)
 
-g <- rbind(g2, g3, size = "first")
+g <- rbind(g2, g3, g4, size = "first")
 g$widths <- unit.pmax(g2$widths, g3$widths)
 grid.newpage()
 grid.draw(g)
 
 
 
-ggsave("results/plots_paper/COR_POD_30.png", g,
+ggsave("results/plots_paper/COR_POD_30_rev1.png", g,
        width = 7.2, height = 6.5, units = "in", dpi = 600)

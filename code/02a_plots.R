@@ -171,7 +171,7 @@ ggplot(study_plot) +
   theme(legend.position = "none") + 
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
-ggsave("results/plots_paper/papers_per_year_continents.png", width = 7.2,
+ggsave("results/plots_paper/papers_per_year_continents_rev1.png", width = 7.2,
        height = 4.3, units = "in", dpi = 600)
 
 

@@ -1,6 +1,7 @@
-
+source('./source/libs.R')
 source('./source/libraries.R')
 source('./source/functions.R')
+library(splitstackshape)
 
 studies <- readRDS('./data/studies.Rds')
 
@@ -57,7 +58,7 @@ UpSet(m)
 m <- m[, 8:1]
 ss = set_size(m)
 cs = comb_size(m)
-ht = UpSet(m, 
+ht = UpSet(m, pt_size = unit(5, "mm"), #dot size
            set_order = order(-ss),
            comb_order = order(-comb_size(m), -(cs)),
            top_annotation = HeatmapAnnotation(
@@ -92,6 +93,6 @@ od = column_order(ht)
 decorate_annotation("Indices Intersections", {
   grid.text(cs[od], x = seq_along(cs), y = unit(cs[od], "native") + unit(2, "pt"), 
             default.units = "native", just = c("left", "bottom"), 
-            gp = gpar(fontsize = 7, col = "#404040"), rot = 45)
+            gp = gpar(fontsize = 8, col = "#000000"), rot = 45)
 })
 

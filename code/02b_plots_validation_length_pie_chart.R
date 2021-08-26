@@ -1,3 +1,11 @@
+source('./source/libs.R')
+source('./source/themes.R')
+source('./source/palettes.R')
+##################################
+refr_type <- readRDS('./data/refr_type.rds')
+study_tempscale <- readRDS('./data/study_tempscale.rds')
+recordlength <- readRDS('./data/recordlength.rds')
+
 refr_type <- refr_type[study_tempscale, on = 'id']
 
 refr_type <- refr_type[recordlength, on = 'id']
@@ -21,7 +29,7 @@ refr_type$ref_type <- factor(refr_type$ref_type,
 
 refr_type <- subset(refr_type, !is.na(group))
 refr_type <- subset(refr_type, !is.na(temporal_scale))
-
+refr_type <- subset(refr_type, !is.na(ref_type))
 
 
 
@@ -67,7 +75,7 @@ final_plot <- df.grobs8 %>%
   {ggplot(data = ., aes(factor(group), factor(temporal_scale))) + 
       #scale_x_continuous(expand=c(0,0),"Validation lenghth",breaks=c(1,2,3,4,5),
       # labels=c("0-12","13-24","25-36","37-48","49-60"), limits=c(0.5,6)) + 
-      scale_x_discrete("Validation length", labels = c("1" = "0 - 12", "2" = "13 - 24" ,
+      scale_x_discrete("Validation length (months)", labels = c("1" = "0 - 12", "2" = "13 - 24" ,
                                                        "3" = "25 - 36",  "4" = "37 - 48",
                                                        "5" = "49 - 60")) +
       scale_y_discrete("Temporal scale", labels = c("1" = "0.5h",  "2" = "1h", "3" = "3h",
@@ -84,5 +92,5 @@ final_plot + theme_small
 
 
 
-ggsave("results/Validation_length_Piechart.png",
+ggsave("results/plots_paper/Validation_length_Piechart_rev1.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)

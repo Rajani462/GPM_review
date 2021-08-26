@@ -96,6 +96,6 @@ final_plot + theme_small +
   theme(axis.text.x = element_text(angle = 40, hjust = 0.8, vjust = 0.9))
 
 
-ggsave("results/plots_paper/spatio_temporal_continents2.png",
+ggsave("results/plots_paper/spatio_temporal_continents2_rev1.png",
        width = 7.2, height = 5.3, units = "in", dpi = 600)
 
